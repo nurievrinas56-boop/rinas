@@ -44,8 +44,8 @@ function goTo(pageId) {
     const target = document.getElementById(`page-${pageId}`);
     if (target) target.classList.add('active');
 
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.nav-link[data-page="${pageId}"]`);
     if (btn) btn.classList.add('active');
 
     if (pageId === 'requests') renderRequests();
@@ -82,13 +82,13 @@ function updateNav() {
     if (isLoggedIn()) {
         guestNav.style.display = 'none';
         userNav.style.display = 'flex';
-        document.querySelectorAll('#userNav .nav-item').forEach(b => b.classList.remove('active'));
-        document.querySelector('#userNav .nav-item[data-page="requests"]')?.classList.add('active');
+        document.querySelectorAll('#userNav .nav-link').forEach(b => b.classList.remove('active'));
+        document.querySelector('#userNav .nav-link[data-page="requests"]')?.classList.add('active');
     } else {
         guestNav.style.display = 'flex';
         userNav.style.display = 'none';
-        document.querySelectorAll('#guestNav .nav-item').forEach(b => b.classList.remove('active'));
-        document.querySelector('#guestNav .nav-item[data-page="login"]')?.classList.add('active');
+        document.querySelectorAll('#guestNav .nav-link').forEach(b => b.classList.remove('active'));
+        document.querySelector('#guestNav .nav-link[data-page="login"]')?.classList.add('active');
     }
 }
 
@@ -96,8 +96,18 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('isAdmin');
     updateUserUI();
-    toast('Вы вышли из системы', 'info');
+    toast('Вы вышли', 'info');
     goTo('login');
+});
+
+// ===== LOGO CLICK =====
+document.getElementById('logoLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (isLoggedIn()) {
+        goTo('requests');
+    } else {
+        goTo('login');
+    }
 });
 
 // ===== REGISTER =====
@@ -131,7 +141,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     }
     users.push({ login, password: pass, fio, phone, email });
     saveUsers(users);
-    toast('Регистрация успешна! Войдите.', 'success');
+    toast('Регистрация успешна!', 'success');
     this.reset();
     goTo('login');
 });
@@ -208,7 +218,7 @@ function renderRequests() {
 
     if (!isLoggedIn()) {
         container.innerHTML =
-            `<div class="empty-state"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
+            `<div class="empty"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -218,7 +228,7 @@ function renderRequests() {
 
     if (userReqs.length === 0) {
         container.innerHTML =
-        `<div class="empty-state"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
+            `<div class="empty"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -409,7 +419,7 @@ function renderAdmin() {
     const pageItems = all.slice(start, start + perPage);
 
     if (pageItems.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Нет заявок</p></div>';
+        container.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i><p>Нет заявок</p></div>';
     } else {
         let html = '';
         const users = getUsers();
@@ -469,7 +479,7 @@ document.getElementById('adminSort').addEventListener('change', () => { adminPag
     renderAdmin(); });
 
 // ===== NAV EVENTS =====
-document.querySelectorAll('.nav-item').forEach(btn => {
+document.querySelectorAll('.nav-link').forEach(btn => {
     btn.addEventListener('click', function() {
         const page = this.dataset.page;
         if ((page === 'requests' || page === 'new-request') && !isLoggedIn()) {

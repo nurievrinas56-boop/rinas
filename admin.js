@@ -14,7 +14,6 @@ function getRequests() { return JSON.parse(localStorage.getItem('requests') || '
 
 function saveRequests(r) { localStorage.setItem('requests', JSON.stringify(r)); }
 
-// ===== TOAST =====
 function toast(msg, type = 'info') {
     const c = document.getElementById('toastContainer');
     const el = document.createElement('div');
@@ -30,7 +29,6 @@ function toast(msg, type = 'info') {
     }, 3500);
 }
 
-// ===== USER / ROLE =====
 function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
 
 function getCurrentRole() {
@@ -39,14 +37,13 @@ function getCurrentRole() {
     return 'guest';
 }
 
-// ===== ОБНОВЛЕНИЕ ИНТЕРФЕЙСА В АДМИНКЕ =====
+// ===== ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ ИНТЕРФЕЙСА В АДМИНКЕ =====
 function updateAdminUI() {
     const nameSpan = document.getElementById('userName');
     const logoutBtn = document.getElementById('logoutBtn');
-    const role = getCurrentRole();
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
-    // В АДМИНКЕ ВСЕГДА ПОКАЗЫВАЕМ ТОЛЬКО АДМИНА ИЛИ ГОСТЯ
-    if (role === 'admin') {
+    if (isAdmin) {
         nameSpan.textContent = '👑 Администратор';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
@@ -55,7 +52,6 @@ function updateAdminUI() {
     }
 }
 
-// ===== КНОПКА ВЫЙТИ =====
 document.getElementById('logoutBtn')?.addEventListener('click', function() {
     sessionStorage.clear();
     updateAdminUI();
@@ -63,7 +59,6 @@ document.getElementById('logoutBtn')?.addEventListener('click', function() {
     window.location.href = 'index.html';
 });
 
-// ===== АДМИН-ПРОВЕРКА =====
 function checkAdmin() {
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
     const loginBox = document.getElementById('adminLoginBox');
@@ -74,8 +69,7 @@ function checkAdmin() {
 
     if (isAdmin) {
         renderAdmin();
-        // Принудительно обновляем UI
-        updateAdminUI();
+        updateAdminUI(); // ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ
     }
 }
 
@@ -88,23 +82,21 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
     const errorEl = document.getElementById('adminErrorMsg');
 
     if (login === 'Admin26' && pass === 'Demo20') {
-        sessionStorage.clear();
+        sessionStorage.clear(); // чистим всё
         sessionStorage.setItem('isAdmin', 'true');
 
         toast('✅ Вход в админ-панель выполнен!', 'success');
-        updateAdminUI();
+        updateAdminUI(); // ПРИНУДИТЕЛЬНО МЕНЯЕМ ИМЯ
         checkAdmin();
     } else {
         errorEl.style.display = 'block';
         errorEl.textContent = '❌ Неверный логин или пароль';
-
         setTimeout(() => {
             errorEl.style.display = 'none';
         }, 3000);
     }
 });
 
-// ===== ВЫХОД ИЗ АДМИНКИ =====
 document.getElementById('adminLogoutBtn').addEventListener('click', function() {
     sessionStorage.clear();
     updateAdminUI();

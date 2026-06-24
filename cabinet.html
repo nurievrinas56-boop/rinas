@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Мои заявки — Учусь.РФ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
     <div id="app">
         <header class="topbar">
-            <a href="index.html" class="logo">
-                <img src="./img/students_corner.png" alt="" style="height:44px; width:auto; border-radius:10px;" />
+            <div class="logo">
+                <img src="./img/students_corner.png" alt="Учусь.РФ" style="height:44px; width:auto; border-radius:10px;" />
                 <span>Учусь.РФ</span>
-            </a>
+            </div>
             <div class="topbar-right">
                 <span id="userName">Гость</span>
             </div>
@@ -25,8 +29,10 @@
         <nav class="main-nav" id="mainNav">
             <a href="index.html" class="nav-link" id="navLogin"><i class="fas fa-sign-in-alt"></i> Вход</a>
             <a href="register.html" class="nav-link" id="navRegister"><i class="fas fa-user-plus"></i> Регистрация</a>
-            <a href="cabinet.html" class="nav-link active" id="navRequests" style="display:none;"><i class="fas fa-file-alt"></i> Заявки</a>
-            <a href="new-request.html" class="nav-link" id="navNewRequest" style="display:none;"><i class="fas fa-plus-circle"></i> Новая</a>
+            <a href="cabinet.html" class="nav-link active" id="navRequests" style="display:none;"><i
+                    class="fas fa-file-alt"></i> Заявки</a>
+            <a href="new-request.html" class="nav-link" id="navNewRequest" style="display:none;"><i
+                    class="fas fa-plus-circle"></i> Новая</a>
         </nav>
 
         <div class="page-head">
@@ -36,10 +42,34 @@
         <!-- СЛАЙДЕР -->
         <div class="slider" id="mainSlider">
             <div class="slider-track" id="sliderTrack">
-                <div class="slide s1"><i class="fas fa-graduation-cap"></i><span>Повышение квалификации</span></div>
-                <div class="slide s2"><i class="fas fa-chalkboard-user"></i><span>Профпереподготовка</span></div>
-                <div class="slide s3"><i class="fas fa-hard-hat"></i><span>Охрана труда</span></div>
-                <div class="slide s4"><i class="fas fa-certificate"></i><span>Сертификация</span></div>
+                <div class="slide s1"
+                    style="background-image: url('./img/course_1.jpg'); background-size: cover; background-position: center; position:relative;">
+                    <div
+                        style="position:absolute; bottom:30px; left:0; right:0; text-align:center; color:#fff; font-size:22px; font-weight:700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+                        <i class="fas fa-graduation-cap"></i> Повышение квалификации
+                    </div>
+                </div>
+                <div class="slide s2"
+                    style="background-image: url('./img/88-gHQq11R0.jpg'); background-size: cover; background-position: center; position:relative;">
+                    <div
+                        style="position:absolute; bottom:30px; left:0; right:0; text-align:center; color:#fff; font-size:22px; font-weight:700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+                        <i class="fas fa-chalkboard-user"></i> Профпереподготовка
+                    </div>
+                </div>
+                <div class="slide s3"
+                    style="background-image: url('./img/6410690722451365045.jpg'); background-size: cover; background-position: center; position:relative;">
+                    <div
+                        style="position:absolute; bottom:30px; left:0; right:0; text-align:center; color:#fff; font-size:22px; font-weight:700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+                        <i class="fas fa-hard-hat"></i> Охрана труда
+                    </div>
+                </div>
+                <div class="slide s4"
+                    style="background-image: url('./img/1678694971_sa.jpg'); background-size: cover; background-position: center; position:relative;">
+                    <div
+                        style="position:absolute; bottom:30px; left:0; right:0; text-align:center; color:#fff; font-size:22px; font-weight:700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+                        <i class="fas fa-certificate"></i> Сертификация
+                    </div>
+                </div>
             </div>
             <button class="slider-btn prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
             <button class="slider-btn next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
@@ -47,7 +77,9 @@
         </div>
 
         <div id="requestsList">
-            <div class="empty"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>
+            <div class="empty"><i class="fas fa-inbox"></i>
+                <p>У вас пока нет заявок</p>
+            </div>
         </div>
 
         <div id="reviewBlock" style="display:none;">
@@ -65,4 +97,5 @@
 
     <script src="main.js"></script>
 </body>
+
 </html>

@@ -25,6 +25,7 @@ function genId() { return Date.now().toString(36) + Math.random().toString(36).s
 // ===== TOAST =====
 function toast(msg, type = 'info') {
     const c = document.getElementById('toastContainer');
+    if (!c) return;
     const el = document.createElement('div');
     el.className = `toast ${type}`;
     const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
@@ -47,17 +48,17 @@ function getCurrentRole() {
     return 'guest';
 }
 
-// ===== УПРАВЛЕНИЕ НАВИГАЦИЕЙ =====
-function updateNav() {
+// ===== ОБНОВЛЕНИЕ ВСЕГО ИНТЕРФЕЙСА =====
+function updateUI() {
     const role = getCurrentRole();
+    const userName = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
     const navLogin = document.getElementById('navLogin');
     const navRegister = document.getElementById('navRegister');
     const navRequests = document.getElementById('navRequests');
     const navNewRequest = document.getElementById('navNewRequest');
-    const userName = document.getElementById('userName');
-    const logoutBtn = document.getElementById('logoutBtn');
 
-    // Обновляем имя пользователя и кнопку выхода
+    // Имя и кнопка выхода
     if (role === 'admin') {
         if (userName) userName.textContent = '👑 Администратор';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
@@ -72,7 +73,7 @@ function updateNav() {
         if (logoutBtn) logoutBtn.style.display = 'none';
     }
 
-    // Показываем/скрываем пункты меню
+    // Навигация
     if (role === 'user' || role === 'admin') {
         if (navLogin) navLogin.style.display = 'none';
         if (navRegister) navRegister.style.display = 'none';
@@ -86,123 +87,138 @@ function updateNav() {
     }
 }
 
-// ===== КНОПКА ВЫЙТИ =====
-document.getElementById('logoutBtn')?.addEventListener('click', function() {
-    sessionStorage.clear();
-    updateNav();
-    toast('Вы вышли', 'info');
-    window.location.href = 'index.html';
-});
-
-// ===== REGISTER =====
-document.getElementById('registerForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const login = document.getElementById('regLogin').value.trim();
-    const pass = document.getElementById('regPass').value.trim();
-    const fio = document.getElementById('regFio').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const loginErr = document.getElementById('regLoginError');
-    const passErr = document.getElementById('regPassError');
-    loginErr.classList.remove('show');
-    passErr.classList.remove('show');
-
-    if (!/^[a-zA-Z0-9]{6,}$/.test(login)) {
-        loginErr.textContent = 'Логин: ≥6 символов, только латиница и цифры';
-        loginErr.classList.add('show');
-        return;
-    }
-    const users = getUsers();
-    if (users.some(u => u.login === login)) {
-        loginErr.textContent = 'Такой логин уже занят';
-        loginErr.classList.add('show');
-        return;
-    }
-    if (pass.length < 8) {
-        passErr.textContent = 'Пароль должен быть ≥8 символов';
-        passErr.classList.add('show');
-        return;
-    }
-    users.push({ login, password: pass, fio, phone, email });
-    saveUsers(users);
-    toast('Регистрация успешна!', 'success');
-    this.reset();
-    window.location.href = 'index.html';
-});
-
-// ===== LOGIN =====
-document.getElementById('loginForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const login = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
-    const err = document.getElementById('loginError');
-    err.classList.remove('show');
-
-    const users = getUsers();
-    const found = users.find(u => u.login === login && u.password === pass);
-    if (found) {
+// ===== ВЫХОД =====
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
         sessionStorage.clear();
-        sessionStorage.setItem('currentUser', login);
-        toast(`Добро пожаловать, ${found.fio || login}!`, 'success');
-        this.reset();
-        window.location.href = 'cabinet.html';
-    } else {
-        err.textContent = 'Неверный логин или пароль';
-        err.classList.add('show');
-    }
-});
+        updateUI();
+        toast('Вы вышли', 'info');
+        window.location.href = 'index.html';
+    });
+}
 
-// ===== NEW REQUEST =====
+// ===== РЕГИСТРАЦИЯ =====
+const registerForm = document.getElementById('registerForm');
+if (registerForm) {
+    registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const login = document.getElementById('regLogin').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        const fio = document.getElementById('regFio').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const loginErr = document.getElementById('regLoginError');
+        const passErr = document.getElementById('regPassError');
+        if (loginErr) loginErr.classList.remove('show');
+        if (passErr) passErr.classList.remove('show');
+
+        if (!/^[a-zA-Z0-9]{6,}$/.test(login)) {
+            if (loginErr) { loginErr.textContent = 'Логин: ≥6 символов, только латиница и цифры';
+            loginErr.classList.add('show'); }
+            return;
+        }
+        const users = getUsers();
+        if (users.some(u => u.login === login)) {
+            if (loginErr) { loginErr.textContent = 'Такой логин уже занят';
+            loginErr.classList.add('show'); }
+            return;
+        }
+        if (pass.length < 8) {
+            if (passErr) { passErr.textContent = 'Пароль должен быть ≥8 символов';
+            passErr.classList.add('show'); }
+            return;
+        }
+        users.push({ login, password: pass, fio, phone, email });
+        saveUsers(users);
+        toast('Регистрация успешна!', 'success');
+        this.reset();
+        window.location.href = 'index.html';
+    });
+}
+
+// ===== ВХОД =====
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const login = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const err = document.getElementById('loginError');
+        if (err) err.classList.remove('show');
+
+        const users = getUsers();
+        const found = users.find(u => u.login === login && u.password === pass);
+        if (found) {
+            sessionStorage.clear();
+            sessionStorage.setItem('currentUser', login);
+            toast(`Добро пожаловать, ${found.fio || login}!`, 'success');
+            this.reset();
+            window.location.href = 'cabinet.html';
+        } else {
+            if (err) { err.textContent = 'Неверный логин или пароль';
+            err.classList.add('show'); }
+        }
+    });
+}
+
+// ===== НОВАЯ ЗАЯВКА =====
 function checkNewRequest() {
     const block = document.getElementById('newRequestFormBlock');
     const guest = document.getElementById('newRequestGuest');
     const role = getCurrentRole();
-    if (role === 'user') {
-        block.style.display = 'block';
-        guest.style.display = 'none';
-    } else {
-        block.style.display = 'none';
-        guest.style.display = 'block';
+    if (block && guest) {
+        if (role === 'user') {
+            block.style.display = 'block';
+            guest.style.display = 'none';
+        } else {
+            block.style.display = 'none';
+            guest.style.display = 'block';
+        }
     }
 }
 
-document.getElementById('newRequestForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (getCurrentRole() !== 'user') {
-        toast('Войдите как пользователь', 'error');
-        return;
-    }
-    const course = document.getElementById('requestCourse').value;
-    const date = document.getElementById('requestDate').value.trim();
-    const payment = document.getElementById('requestPayment').value;
-    if (!course || !payment) { toast('Заполните все поля', 'error'); return; }
-    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(date)) { toast('Дата в формате ДД.ММ.ГГГГ', 'error'); return; }
-    const parts = date.split('.');
-    const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    if (d.getDate() != parseInt(parts[0]) || d.getMonth() != parseInt(parts[1]) - 1) {
-        toast('Некорректная дата', 'error');
-        return;
-    }
-    const reqs = getRequests();
-    reqs.push({
-        id: genId(),
-        user: getCurrentUser(),
-        course,
-        date,
-        payment,
-        status: 'Новая',
-        createdAt: new Date().toISOString()
+const newRequestForm = document.getElementById('newRequestForm');
+if (newRequestForm) {
+    newRequestForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (getCurrentRole() !== 'user') {
+            toast('Войдите как пользователь', 'error');
+            return;
+        }
+        const course = document.getElementById('requestCourse').value;
+        const date = document.getElementById('requestDate').value.trim();
+        const payment = document.getElementById('requestPayment').value;
+        if (!course || !payment) { toast('Заполните все поля', 'error'); return; }
+        if (!/^\d{2}\.\d{2}\.\d{4}$/.test(date)) { toast('Дата в формате ДД.ММ.ГГГГ', 'error'); return; }
+        const parts = date.split('.');
+        const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        if (d.getDate() != parseInt(parts[0]) || d.getMonth() != parseInt(parts[1]) - 1) {
+            toast('Некорректная дата', 'error');
+            return;
+        }
+        const reqs = getRequests();
+        reqs.push({
+            id: genId(),
+            user: getCurrentUser(),
+            course,
+            date,
+            payment,
+            status: 'Новая',
+            createdAt: new Date().toISOString()
+        });
+        saveRequests(reqs);
+        toast('Заявка отправлена!', 'success');
+        this.reset();
+        window.location.href = 'cabinet.html';
     });
-    saveRequests(reqs);
-    toast('Заявка отправлена!', 'success');
-    this.reset();
-    window.location.href = 'cabinet.html';
-});
+}
 
-// ===== REQUESTS =====
+// ===== ОТОБРАЖЕНИЕ ЗАЯВОК =====
 function renderRequests() {
     const container = document.getElementById('requestsList');
     const reviewBlock = document.getElementById('reviewBlock');
+    if (!container) return;
 
     if (getCurrentRole() !== 'user') {
         container.innerHTML = `<div class="empty"><i class="fas fa-lock"></i><p>Войдите как пользователь</p></div>`;
@@ -270,13 +286,13 @@ function renderRequests() {
             const msg = document.getElementById('reviewMsg');
 
             if (already) {
-                textarea.disabled = true;
-                submitBtn.disabled = true;
-                msg.textContent = '✅ Вы уже оставили отзыв. Спасибо!';
+                if (textarea) textarea.disabled = true;
+                if (submitBtn) submitBtn.disabled = true;
+                if (msg) msg.textContent = '✅ Вы уже оставили отзыв. Спасибо!';
             } else {
-                textarea.disabled = false;
-                submitBtn.disabled = false;
-                msg.textContent = '';
+                if (textarea) textarea.disabled = false;
+                if (submitBtn) submitBtn.disabled = false;
+                if (msg) msg.textContent = '';
             }
         } else {
             reviewBlock.style.display = 'none';
@@ -285,37 +301,43 @@ function renderRequests() {
 }
 
 // ===== ОТПРАВКА ОТЗЫВА =====
-document.getElementById('submitReview')?.addEventListener('click', function() {
-    if (getCurrentRole() !== 'user') {
-        toast('Войдите как пользователь', 'error');
-        return;
-    }
+const submitReviewBtn = document.getElementById('submitReview');
+if (submitReviewBtn) {
+    submitReviewBtn.addEventListener('click', function() {
+        if (getCurrentRole() !== 'user') {
+            toast('Войдите как пользователь', 'error');
+            return;
+        }
 
-    const text = document.getElementById('reviewText').value.trim();
-    if (!text) {
-        toast('Напишите текст отзыва', 'error');
-        return;
-    }
+        const textarea = document.getElementById('reviewText');
+        if (!textarea) return;
+        const text = textarea.value.trim();
+        if (!text) {
+            toast('Напишите текст отзыва', 'error');
+            return;
+        }
 
-    const reviews = getReviews();
-    if (reviews.some(r => r.user === getCurrentUser())) {
-        toast('Вы уже оставили отзыв', 'error');
-        return;
-    }
+        const reviews = getReviews();
+        if (reviews.some(r => r.user === getCurrentUser())) {
+            toast('Вы уже оставили отзыв', 'error');
+            return;
+        }
 
-    reviews.push({ id: genId(), user: getCurrentUser(), text, createdAt: new Date().toISOString() });
-    saveReviews(reviews);
+        reviews.push({ id: genId(), user: getCurrentUser(), text, createdAt: new Date().toISOString() });
+        saveReviews(reviews);
 
-    toast('Спасибо за отзыв!', 'success');
-    document.getElementById('reviewText').value = '';
-    document.getElementById('reviewText').disabled = true;
-    this.disabled = true;
-    document.getElementById('reviewMsg').textContent = '✅ Отзыв сохранён!';
+        toast('Спасибо за отзыв!', 'success');
+        textarea.value = '';
+        textarea.disabled = true;
+        this.disabled = true;
+        const msg = document.getElementById('reviewMsg');
+        if (msg) msg.textContent = '✅ Отзыв сохранён!';
 
-    setTimeout(() => renderRequests(), 300);
-});
+        setTimeout(() => renderRequests(), 300);
+    });
+}
 
-// ===== SLIDER =====
+// ===== СЛАЙДЕР =====
 let slideIndex = 0;
 let slideTimer = null;
 
@@ -361,22 +383,22 @@ function startSlider() {
     slideTimer = setInterval(nextSlide, 3000);
 }
 
-document.getElementById('sliderPrev')?.addEventListener('click', () => { prevSlide();
+const sliderPrev = document.getElementById('sliderPrev');
+const sliderNext = document.getElementById('sliderNext');
+if (sliderPrev) sliderPrev.addEventListener('click', () => { prevSlide();
     startSlider(); });
-document.getElementById('sliderNext')?.addEventListener('click', () => { nextSlide();
+if (sliderNext) sliderNext.addEventListener('click', () => { nextSlide();
     startSlider(); });
 
-// ===== START =====
+// ===== СТАРТ =====
 document.addEventListener('DOMContentLoaded', function() {
-    updateNav();
+    updateUI();
     initSlider();
 
-    // Если мы на странице заявок — рендерим
     if (window.location.pathname.includes('cabinet.html')) {
         renderRequests();
     }
 
-    // Если на странице новой заявки — проверяем доступ
     if (window.location.pathname.includes('new-request.html')) {
         checkNewRequest();
     }

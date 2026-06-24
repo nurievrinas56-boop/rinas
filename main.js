@@ -38,31 +38,12 @@ function toast(msg, type = 'info') {
     }, 3500);
 }
 
-// ===== NAVIGATION =====
-function goTo(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(`page-${pageId}`);
-    if (target) target.classList.add('active');
-
-    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector(`.nav-link[data-page="${pageId}"]`);
-    if (btn) btn.classList.add('active');
-
-    if (pageId === 'requests') renderRequests();
-    if (pageId === 'new-request') checkNewRequest();
-    if (pageId === 'admin') checkAdmin();
-}
-
-// ===== USER / ROLE =====
+// ===== USER =====
 function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
 
 function getCurrentRole() {
-    if (sessionStorage.getItem('isAdmin') === 'true') {
-        return 'admin';
-    }
-    if (sessionStorage.getItem('currentUser')) {
-        return 'user';
-    }
+    if (sessionStorage.getItem('isAdmin') === 'true') return 'admin';
+    if (sessionStorage.getItem('currentUser')) return 'user';
     return 'guest';
 }
 
@@ -73,64 +54,29 @@ function updateUserUI() {
 
     if (role === 'admin') {
         nameSpan.textContent = '👑 Администратор';
-        logoutBtn.style.display = 'inline-block';
+        if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else if (role === 'user') {
         const user = getCurrentUser();
         const users = getUsers();
         const found = users.find(u => u.login === user);
         nameSpan.textContent = found ? found.fio || user : user;
-        logoutBtn.style.display = 'inline-block';
+        if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
         nameSpan.textContent = 'Гость';
-        logoutBtn.style.display = 'none';
-    }
-    updateNav();
-}
-
-function updateNav() {
-    const guestNav = document.getElementById('guestNav');
-    const userNav = document.getElementById('userNav');
-    const role = getCurrentRole();
-
-    if (role === 'admin' || role === 'user') {
-        guestNav.style.display = 'none';
-        userNav.style.display = 'flex';
-        document.querySelectorAll('#userNav .nav-link').forEach(b => b.classList.remove('active'));
-        if (role === 'admin') {
-            document.querySelector('#userNav .nav-link[data-page="admin"]')?.classList.add('active');
-        } else {
-            document.querySelector('#userNav .nav-link[data-page="requests"]')?.classList.add('active');
-        }
-    } else {
-        guestNav.style.display = 'flex';
-        userNav.style.display = 'none';
-        document.querySelectorAll('#guestNav .nav-link').forEach(b => b.classList.remove('active'));
-        document.querySelector('#guestNav .nav-link[data-page="login"]')?.classList.add('active');
+        if (logoutBtn) logoutBtn.style.display = 'none';
     }
 }
 
-document.getElementById('logoutBtn').addEventListener('click', function() {
+// ===== LOGOUT =====
+document.getElementById('logoutBtn')?.addEventListener('click', function() {
     sessionStorage.clear();
     updateUserUI();
     toast('Вы вышли', 'info');
-    goTo('login');
-});
-
-// ===== LOGO CLICK =====
-document.getElementById('logoLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    const role = getCurrentRole();
-    if (role === 'admin') {
-        goTo('admin');
-    } else if (role === 'user') {
-        goTo('requests');
-    } else {
-        goTo('login');
-    }
+    window.location.href = 'index.html';
 });
 
 // ===== REGISTER =====
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('registerForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const login = document.getElementById('regLogin').value.trim();
     const pass = document.getElementById('regPass').value.trim();
@@ -162,11 +108,11 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     saveUsers(users);
     toast('Регистрация успешна!', 'success');
     this.reset();
-    goTo('login');
+    window.location.href = 'index.html';
 });
 
 // ===== LOGIN =====
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const login = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
@@ -181,7 +127,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         updateUserUI();
         toast(`Добро пожаловать, ${found.fio || login}!`, 'success');
         this.reset();
-        goTo('requests');
+        window.location.href = 'cabinet.html';
     } else {
         err.textContent = 'Неверный логин или пароль';
         err.classList.add('show');
@@ -202,7 +148,7 @@ function checkNewRequest() {
     }
 }
 
-document.getElementById('newRequestForm').addEventListener('submit', function(e) {
+document.getElementById('newRequestForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     if (getCurrentRole() !== 'user') {
         toast('Войдите как пользователь', 'error');
@@ -232,7 +178,7 @@ document.getElementById('newRequestForm').addEventListener('submit', function(e)
     saveRequests(reqs);
     toast('Заявка отправлена!', 'success');
     this.reset();
-    goTo('requests');
+    window.location.href = 'cabinet.html';
 });
 
 // ===== REQUESTS =====
@@ -241,9 +187,8 @@ function renderRequests() {
     const reviewBlock = document.getElementById('reviewBlock');
 
     if (getCurrentRole() !== 'user') {
-        container.innerHTML =
-            `<div class="empty"><i class="fas fa-lock"></i><p>Войдите как пользователь, чтобы увидеть заявки</p></div>`;
-        reviewBlock.style.display = 'none';
+        container.innerHTML = `<div class="empty"><i class="fas fa-lock"></i><p>Войдите как пользователь</p></div>`;
+        if (reviewBlock) reviewBlock.style.display = 'none';
         return;
     }
 
@@ -251,9 +196,8 @@ function renderRequests() {
     const userReqs = all.filter(r => r.user === getCurrentUser());
 
     if (userReqs.length === 0) {
-        container.innerHTML =
-            `<div class="empty"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
-        reviewBlock.style.display = 'none';
+        container.innerHTML = `<div class="empty"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
+        if (reviewBlock) reviewBlock.style.display = 'none';
         return;
     }
 
@@ -263,16 +207,11 @@ function renderRequests() {
     let hasCompleted = false;
 
     userReqs.forEach(r => {
-        const cls = r.status === 'Новая' ? 'status-new' :
-            r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
+        const cls = r.status === 'Новая' ? 'status-new' : r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
         if (r.status === 'Обучение завершено') hasCompleted = true;
-
         html += `
             <div class="request-card">
-                <div class="top">
-                    <strong>${r.course}</strong>
-                    <span class="status ${cls}">${r.status}</span>
-                </div>
+                <div class="top"><strong>${r.course}</strong><span class="status ${cls}">${r.status}</span></div>
                 <div class="request-meta">
                     <span><i class="fas fa-calendar-day"></i> ${r.date}</span>
                     <span><i class="fas fa-credit-card"></i> ${r.payment}</span>
@@ -283,7 +222,7 @@ function renderRequests() {
 
     container.innerHTML = html;
 
-    // ===== ПОКАЗЫВАЕМ РАНЕЕ ОСТАВЛЕННЫЕ ОТЗЫВЫ =====
+    // Отзывы
     const allReviews = getReviews();
     const userReviews = allReviews.filter(r => r.user === getCurrentUser());
 
@@ -303,39 +242,35 @@ function renderRequests() {
         container.insertAdjacentHTML('afterend', reviewHtml);
     }
 
-    // ===== БЛОК ДЛЯ НОВОГО ОТЗЫВА =====
-    if (hasCompleted) {
-        reviewBlock.style.display = 'block';
-        const already = userReviews.some(r => r.user === getCurrentUser());
-        const textarea = document.getElementById('reviewText');
-        const submitBtn = document.getElementById('submitReview');
-        const msg = document.getElementById('reviewMsg');
-
-        if (already) {
-            textarea.disabled = true;
-            submitBtn.disabled = true;
-            msg.textContent = '✅ Вы уже оставили отзыв. Спасибо!';
+    if (reviewBlock) {
+        if (hasCompleted) {
+            reviewBlock.style.display = 'block';
+            const already = userReviews.some(r => r.user === getCurrentUser());
+            const textarea = document.getElementById('reviewText');
+            const submitBtn = document.getElementById('submitReview');
+            const msg = document.getElementById('reviewMsg');
+            if (already) {
+                textarea.disabled = true;
+                submitBtn.disabled = true;
+                msg.textContent = '✅ Вы уже оставили отзыв. Спасибо!';
+            } else {
+                textarea.disabled = false;
+                submitBtn.disabled = false;
+                msg.textContent = '';
+            }
         } else {
-            textarea.disabled = false;
-            submitBtn.disabled = false;
-            msg.textContent = '';
+            reviewBlock.style.display = 'none';
         }
-    } else {
-        reviewBlock.style.display = 'none';
     }
 }
 
-// ===== REVIEW =====
-document.getElementById('submitReview').addEventListener('click', function() {
+document.getElementById('submitReview')?.addEventListener('click', function() {
     if (getCurrentRole() !== 'user') {
         toast('Войдите как пользователь', 'error');
         return;
     }
     const text = document.getElementById('reviewText').value.trim();
-    if (!text) {
-        toast('Напишите текст отзыва', 'error');
-        return;
-    }
+    if (!text) { toast('Напишите текст отзыва', 'error'); return; }
     const reviews = getReviews();
     if (reviews.some(r => r.user === getCurrentUser())) {
         toast('Вы уже оставили отзыв', 'error');
@@ -379,13 +314,10 @@ function goSlide(index) {
     const track = document.getElementById('sliderTrack');
     const slides = track.querySelectorAll('.slide');
     if (slides.length === 0) return;
-
     if (index >= slides.length) index = 0;
     if (index < 0) index = slides.length - 1;
     slideIndex = index;
-
     track.style.transform = `translateX(-${slideIndex * 100}%)`;
-
     document.querySelectorAll('.slider-dots span').forEach((dot, i) => {
         dot.classList.toggle('active', i === slideIndex);
     });
@@ -400,207 +332,23 @@ function startSlider() {
     slideTimer = setInterval(nextSlide, 3000);
 }
 
-document.getElementById('sliderPrev').addEventListener('click', () => { prevSlide();
+document.getElementById('sliderPrev')?.addEventListener('click', () => { prevSlide();
     startSlider(); });
-document.getElementById('sliderNext').addEventListener('click', () => { nextSlide();
+document.getElementById('sliderNext')?.addEventListener('click', () => { nextSlide();
     startSlider(); });
-
-// ===== ADMIN =====
-function checkAdmin() {
-    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-    const loginBox = document.getElementById('adminLoginBox');
-    const panel = document.getElementById('adminPanel');
-    
-    if (loginBox) loginBox.style.display = isAdmin ? 'none' : 'block';
-    if (panel) panel.style.display = isAdmin ? 'block' : 'none';
-    
-    if (isAdmin) renderAdmin();
-}
-
-// ===== АДМИН ВХОД — ПРОВЕРКА ПО ТЗ =====
-document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const login = document.getElementById('adminUser').value.trim();
-    const pass = document.getElementById('adminPass').value.trim();
-
-    // ПРОВЕРКА ПО ТЗ
-    if (login === 'Admin26' && pass === 'Demo20') {
-        // Очищаем всё и ставим админа
-        sessionStorage.clear();
-        sessionStorage.setItem('isAdmin', 'true');
-        
-        toast('✅ Вход в админ-панель выполнен!', 'success');
-        updateUserUI();
-        checkAdmin();
-        goTo('admin');
-    } else {
-        toast('❌ Неверный логин или пароль администратора', 'error');
-        // Показываем ошибку прямо в форме
-        const errorEl = document.createElement('div');
-        errorEl.className = 'error show';
-        errorEl.textContent = 'Неверный логин или пароль';
-        errorEl.style.color = '#dc3545';
-        errorEl.style.fontSize = '14px';
-        errorEl.style.marginTop = '8px';
-        errorEl.style.textAlign = 'center';
-        
-        // Удаляем старую ошибку если есть
-        const oldError = document.querySelector('.admin-error');
-        if (oldError) oldError.remove();
-        errorEl.className = 'admin-error error show';
-        
-        const form = document.getElementById('adminLoginForm');
-        form.appendChild(errorEl);
-        
-        setTimeout(() => {
-            if (errorEl.parentNode) errorEl.remove();
-        }, 3000);
-    }
-});
-
-document.getElementById('adminLogoutBtn').addEventListener('click', function() {
-    sessionStorage.clear();
-    updateUserUI();
-    checkAdmin();
-    toast('Вы вышли из админки', 'info');
-    goTo('login');
-});
-
-let adminPage = 1;
-const perPage = 3;
-
-function renderAdmin() {
-    const container = document.getElementById('adminRequestsList');
-    const pagination = document.getElementById('adminPagination');
-
-    let all = getRequests();
-    const filter = document.getElementById('adminFilter').value;
-    const sort = document.getElementById('adminSort').value;
-
-    if (filter !== 'all') {
-        all = all.filter(r => r.status === filter);
-    }
-
-    if (sort === 'date-asc') {
-        all.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    } else if (sort === 'date-desc') {
-        all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sort === 'status') {
-        const order = { 'Новая': 0, 'Идет обучение': 1, 'Обучение завершено': 2 };
-        all.sort((a, b) => order[a.status] - order[b.status]);
-    }
-
-    const total = Math.max(1, Math.ceil(all.length / perPage));
-    if (adminPage > total) adminPage = total;
-
-    const start = (adminPage - 1) * perPage;
-    const pageItems = all.slice(start, start + perPage);
-
-    if (pageItems.length === 0) {
-        container.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i><p>Нет заявок</p></div>';
-    } else {
-        let html = '';
-        const users = getUsers();
-        pageItems.forEach(r => {
-            const user = users.find(u => u.login === r.user);
-            const name = user ? user.fio || r.user : r.user;
-            const cls = r.status === 'Новая' ? 'status-new' :
-                r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
-
-            html += `
-                <div class="admin-request-item">
-                    <div class="top">
-                        <strong>${r.course}</strong>
-                        <span class="status ${cls}">${r.status}</span>
-                    </div>
-                    <div class="request-meta">
-                        <span><i class="fas fa-user"></i> ${name}</span>
-                        <span><i class="fas fa-calendar-day"></i> ${r.date}</span>
-                        <span><i class="fas fa-credit-card"></i> ${r.payment}</span>
-                    </div>
-                    <div class="actions">
-                        ${r.status === 'Новая' ? `<button class="btn primary" onclick="changeStatus('${r.id}','Идет обучение')">Начать</button>` : ''}
-                        ${r.status === 'Идет обучение' ? `<button class="btn success" onclick="changeStatus('${r.id}','Обучение завершено')">Завершить</button>` : ''}
-                    </div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    let pagHtml = '';
-    for (let i = 1; i <= total; i++) {
-        pagHtml += `<button class="${i === adminPage ? 'active' : ''}" onclick="adminGoPage(${i})">${i}</button>`;
-    }
-    pagination.innerHTML = pagHtml;
-}
-
-window.changeStatus = function(id, newStatus) {
-    const reqs = getRequests();
-    const idx = reqs.findIndex(r => r.id === id);
-    if (idx === -1) return;
-    reqs[idx].status = newStatus;
-    saveRequests(reqs);
-    toast(`Статус изменён на «${newStatus}»`, 'success');
-    renderAdmin();
-    renderRequests();
-};
-
-window.adminGoPage = function(page) {
-    adminPage = page;
-    renderAdmin();
-};
-
-document.getElementById('adminFilter').addEventListener('change', () => { adminPage = 1;
-    renderAdmin(); });
-document.getElementById('adminSort').addEventListener('change', () => { adminPage = 1;
-    renderAdmin(); });
-
-// ===== NAV EVENTS =====
-document.querySelectorAll('.nav-link').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const page = this.dataset.page;
-        const role = getCurrentRole();
-
-        if (page === 'admin' && role === 'admin') {
-            goTo('admin');
-            return;
-        }
-
-        if ((page === 'requests' || page === 'new-request') && role !== 'user') {
-            toast('Войдите как пользователь', 'error');
-            goTo('login');
-            return;
-        }
-
-        if (page === 'admin' && role !== 'admin') {
-            toast('Войдите как администратор', 'error');
-            goTo('login');
-            return;
-        }
-
-        goTo(page);
-    });
-});
-
-document.querySelectorAll('.link').forEach(btn => {
-    btn.addEventListener('click', function() {
-        goTo(this.dataset.page);
-    });
-});
 
 // ===== START =====
 document.addEventListener('DOMContentLoaded', function() {
     updateUserUI();
     initSlider();
 
-    const role = getCurrentRole();
-    if (role === 'admin') {
-        goTo('admin');
-    } else if (role === 'user') {
-        goTo('requests');
-    } else {
-        goTo('login');
+    // Если мы на странице заявок — рендерим
+    if (window.location.pathname.includes('cabinet.html')) {
+        renderRequests();
+    }
+
+    // Если на странице новой заявки — проверяем доступ
+    if (window.location.pathname.includes('new-request.html')) {
+        checkNewRequest();
     }
 });

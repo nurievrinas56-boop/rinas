@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Вход — Учусь.РФ</title>
+    <title>Регистрация — Учусь.РФ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
@@ -28,29 +28,39 @@
         </header>
 
         <nav class="main-nav">
-            <a href="index.html" class="nav-link active"><i class="fas fa-sign-in-alt"></i> Вход</a>
-            <a href="register.html" class="nav-link"><i class="fas fa-user-plus"></i> Регистрация</a>
+            <a href="index.html" class="nav-link"><i class="fas fa-sign-in-alt"></i> Вход</a>
+            <a href="register.html" class="nav-link active"><i class="fas fa-user-plus"></i> Регистрация</a>
             <a href="admin.html" class="nav-link"><i class="fas fa-user-shield"></i> Админ</a>
         </nav>
 
         <div class="page-head">
-            <h2>Добро пожаловать</h2>
-            <p>Войдите в свой аккаунт</p>
+            <h2>Создать аккаунт</h2>
+            <p>Заполните форму ниже</p>
         </div>
 
-        <form id="loginForm" class="auth-form">
+        <form id="registerForm" class="auth-form">
             <div class="field">
-                <input type="text" id="loginUser" placeholder="Логин" />
-                <div class="error" id="loginError">Неверный логин или пароль</div>
+                <input type="text" id="regLogin" placeholder="Логин (латиница, ≥6)" />
+                <div class="error" id="regLoginError">Логин ≥6 символов, только латиница и цифры</div>
             </div>
             <div class="field">
-                <input type="password" id="loginPass" placeholder="Пароль" />
+                <input type="password" id="regPass" placeholder="Пароль (≥8 символов)" />
+                <div class="error" id="regPassError">Пароль должен быть ≥8 символов</div>
             </div>
-            <button type="submit" class="btn primary">Войти</button>
+            <div class="field">
+                <input type="text" id="regFio" placeholder="ФИО" />
+            </div>
+            <div class="field">
+                <input type="text" id="regPhone" placeholder="Телефон" />
+            </div>
+            <div class="field">
+                <input type="email" id="regEmail" placeholder="E-mail" />
+            </div>
+            <button type="submit" class="btn primary">Зарегистрироваться</button>
         </form>
 
         <div class="switch">
-            <a href="register.html" class="link">Нет аккаунта? <strong>Регистрация</strong></a>
+            <a href="index.html" class="link">Уже есть аккаунт? <strong>Войти</strong></a>
         </div>
 
         <div id="toastContainer"></div>

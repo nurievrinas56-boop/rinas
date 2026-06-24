@@ -25,7 +25,6 @@ body {
     padding: 28px 24px 32px;
 }
 
-/* ===== TOPBAR ===== */
 .topbar {
     display: flex;
     justify-content: space-between;
@@ -74,7 +73,6 @@ body {
     background: #f1f5f9;
 }
 
-/* ===== MAIN NAV ===== */
 .main-nav {
     display: flex;
     gap: 6px;
@@ -100,6 +98,7 @@ body {
     cursor: pointer;
     transition: 0.15s;
     font-family: inherit;
+    text-decoration: none;
 }
 
 .nav-link i {
@@ -114,35 +113,6 @@ body {
 
 .nav-link:hover:not(.active) {
     color: #0d47a1;
-}
-
-#guestNav,
-#userNav {
-    display: flex;
-    flex: 2;
-    gap: 6px;
-}
-
-/* ===== PAGES ===== */
-.page {
-    display: none;
-}
-
-.page.active {
-    display: block;
-    animation: fade 0.25s ease;
-}
-
-@keyframes fade {
-    0% {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .page-head {
@@ -174,7 +144,6 @@ hr {
     margin: 20px 0;
 }
 
-/* ===== AUTH FORM ===== */
 .auth-form .field {
     margin-bottom: 16px;
 }
@@ -216,7 +185,6 @@ hr {
     margin-top: 6px;
 }
 
-/* ===== BUTTONS ===== */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -276,6 +244,7 @@ hr {
     font-size: 16px;
     cursor: pointer;
     font-family: inherit;
+    text-decoration: none;
 }
 
 .link strong {
@@ -286,7 +255,6 @@ hr {
     text-decoration: underline;
 }
 
-/* ===== REQUESTS ===== */
 .request-card {
     background: #f8fafc;
     border-radius: 16px;
@@ -366,7 +334,6 @@ hr {
     font-size: 16px;
 }
 
-/* ===== SLIDER ===== */
 .slider {
     position: relative;
     border-radius: 18px;
@@ -463,7 +430,6 @@ hr {
     background: #ffffff;
 }
 
-/* ===== REVIEW ===== */
 .review-box {
     background: #f8fafc;
     border-radius: 16px;
@@ -494,7 +460,6 @@ hr {
     font-size: 16px;
 }
 
-/* ===== ADMIN ===== */
 .admin-tools {
     display: flex;
     gap: 8px;
@@ -541,7 +506,6 @@ hr {
     padding: 6px 18px;
 }
 
-/* ===== PAGINATION ===== */
 .pagination {
     display: flex;
     gap: 8px;
@@ -571,7 +535,6 @@ hr {
     background: #f1f5f9;
 }
 
-/* ===== TOAST ===== */
 #toastContainer {
     position: fixed;
     bottom: 24px;
@@ -625,7 +588,6 @@ hr {
     }
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
     #app {
         padding: 18px 14px 22px;

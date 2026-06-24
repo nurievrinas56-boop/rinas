@@ -1,131 +1,180 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Учусь.РФ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="app-container">
-        <!-- ШАПКА -->
+
+    <div class="app">
+        <!-- HEADER -->
         <header class="header">
-            <h1><i class="fas fa-graduation-cap"></i> Учусь.РФ</h1>
-            <div class="user-info" id="userInfo">
-                <span id="userName">Гость</span>
-                <button class="logout-btn" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i></button>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <span>Учусь.РФ</span>
+            </div>
+            <div class="user-info">
+                <span id="userName" class="user-name">Гость</span>
+                <button id="logoutBtn" class="logout-btn" style="display:none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </header>
 
-        <!-- НАВИГАЦИЯ -->
+        <!-- NAV -->
         <nav class="nav" id="mainNav">
-            <button class="nav-btn active" data-page="login"><i class="fas fa-sign-in-alt"></i> Вход</button>
-            <button class="nav-btn" data-page="register"><i class="fas fa-user-plus"></i> Регистрация</button>
-            <button class="nav-btn" data-page="requests" id="navRequests"><i class="fas fa-file-alt"></i> Заявки</button>
-            <button class="nav-btn" data-page="new-request" id="navNewRequest"><i class="fas fa-plus-circle"></i> Новая</button>
-            <button class="nav-btn" data-page="admin"><i class="fas fa-user-shield"></i> Админ</button>
+            <button class="nav-item active" data-page="login">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Вход</span>
+            </button>
+            <button class="nav-item" data-page="register">
+                <i class="fas fa-user-plus"></i>
+                <span>Регистрация</span>
+            </button>
+            <button class="nav-item" data-page="requests" id="navRequests">
+                <i class="fas fa-file-alt"></i>
+                <span>Заявки</span>
+            </button>
+            <button class="nav-item" data-page="new-request" id="navNewRequest">
+                <i class="fas fa-plus-circle"></i>
+                <span>Новая</span>
+            </button>
+            <button class="nav-item" data-page="admin">
+                <i class="fas fa-user-shield"></i>
+                <span>Админ</span>
+            </button>
         </nav>
 
-        <!-- СТРАНИЦЫ -->
+        <!-- PAGES -->
         <div class="pages">
 
-            <!-- ВХОД -->
-            <section class="page active" id="page-login">
-                <h2><i class="fas fa-sign-in-alt"></i> Вход</h2>
-                <form id="loginForm">
+            <!-- LOGIN -->
+            <div class="page active" id="page-login">
+                <div class="page-header">
+                    <h2>Вход в систему</h2>
+                    <p class="subtitle">Войдите, чтобы продолжить</p>
+                </div>
+                <form id="loginForm" class="form">
                     <div class="field">
-                        <label><i class="fas fa-user"></i> Логин</label>
-                        <input type="text" id="loginUser" placeholder="Введите логин">
+                        <label>Логин</label>
+                        <input type="text" id="loginUser" placeholder="Введите логин" />
                         <div class="error" id="loginError">Неверный логин или пароль</div>
                     </div>
                     <div class="field">
-                        <label><i class="fas fa-lock"></i> Пароль</label>
-                        <input type="password" id="loginPass" placeholder="Введите пароль">
+                        <label>Пароль</label>
+                        <input type="password" id="loginPass" placeholder="Введите пароль" />
                     </div>
                     <button type="submit" class="btn primary">Войти</button>
                 </form>
-                <div class="switch-link">
-                    <button class="link-btn" data-page="register">Ещё не зарегистрированы? Регистрация</button>
+                <div class="switch">
+                    <button class="link" data-page="register">Ещё нет аккаунта? <strong>Регистрация</strong></button>
                 </div>
-            </section>
+            </div>
 
-            <!-- РЕГИСТРАЦИЯ -->
-            <section class="page" id="page-register">
-                <h2><i class="fas fa-user-plus"></i> Регистрация</h2>
-                <form id="registerForm">
+            <!-- REGISTER -->
+            <div class="page" id="page-register">
+                <div class="page-header">
+                    <h2>Регистрация</h2>
+                    <p class="subtitle">Создайте аккаунт</p>
+                </div>
+                <form id="registerForm" class="form">
                     <div class="field">
-                        <label><i class="fas fa-user"></i> Логин</label>
-                        <input type="text" id="regLogin" placeholder="Латиница+цифры, ≥6 символов">
+                        <label>Логин</label>
+                        <input type="text" id="regLogin" placeholder="Латиница + цифры, ≥6" />
                         <div class="error" id="regLoginError">Логин должен быть ≥6 символов, только латиница и цифры</div>
                     </div>
                     <div class="field">
-                        <label><i class="fas fa-lock"></i> Пароль</label>
-                        <input type="password" id="regPass" placeholder="Не менее 8 символов">
+                        <label>Пароль</label>
+                        <input type="password" id="regPass" placeholder="Не менее 8 символов" />
                         <div class="error" id="regPassError">Пароль должен быть ≥8 символов</div>
                     </div>
                     <div class="field">
-                        <label><i class="fas fa-user-circle"></i> ФИО</label>
-                        <input type="text" id="regFio" placeholder="Иванов Иван Иванович">
+                        <label>ФИО</label>
+                        <input type="text" id="regFio" placeholder="Иванов Иван Иванович" />
                     </div>
                     <div class="field">
-                        <label><i class="fas fa-phone"></i> Телефон</label>
-                        <input type="text" id="regPhone" placeholder="+7 (999) 123-45-67">
+                        <label>Телефон</label>
+                        <input type="text" id="regPhone" placeholder="+7 (999) 123-45-67" />
                     </div>
                     <div class="field">
-                        <label><i class="fas fa-envelope"></i> E-mail</label>
-                        <input type="email" id="regEmail" placeholder="mail@example.com">
+                        <label>E-mail</label>
+                        <input type="email" id="regEmail" placeholder="mail@example.com" />
                     </div>
                     <button type="submit" class="btn primary">Зарегистрироваться</button>
                 </form>
-                <div class="switch-link">
-                    <button class="link-btn" data-page="login">Уже есть аккаунт? Войти</button>
+                <div class="switch">
+                    <button class="link" data-page="login">Уже есть аккаунт? <strong>Войти</strong></button>
                 </div>
-            </section>
+            </div>
 
-            <!-- ЗАЯВКИ (личный кабинет) -->
-            <section class="page" id="page-requests">
-                <h2><i class="fas fa-file-alt"></i> Мои заявки</h2>
+            <!-- REQUESTS -->
+            <div class="page" id="page-requests">
+                <div class="page-header">
+                    <h2>Мои заявки</h2>
+                </div>
 
-                <!-- СЛАЙДЕР (ТОЛЬКО ЗДЕСЬ) -->
+                <!-- SLIDER -->
                 <div class="slider" id="mainSlider">
                     <div class="slider-track" id="sliderTrack">
-                        <div class="slide"><i class="fas fa-graduation-cap"></i> Повышение квалификации</div>
-                        <div class="slide"><i class="fas fa-chalkboard-user"></i> Профпереподготовка</div>
-                        <div class="slide"><i class="fas fa-hard-hat"></i> Охрана труда</div>
-                        <div class="slide"><i class="fas fa-certificate"></i> Сертификация</div>
+                        <div class="slide" style="background:#007bff;">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Повышение квалификации</span>
+                        </div>
+                        <div class="slide" style="background:#0d47a1;">
+                            <i class="fas fa-chalkboard-user"></i>
+                            <span>Профпереподготовка</span>
+                        </div>
+                        <div class="slide" style="background:#1a237e;">
+                            <i class="fas fa-hard-hat"></i>
+                            <span>Охрана труда</span>
+                        </div>
+                        <div class="slide" style="background:#0d3b6e;">
+                            <i class="fas fa-certificate"></i>
+                            <span>Сертификация</span>
+                        </div>
                     </div>
                     <button class="slider-btn prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
                     <button class="slider-btn next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
                     <div class="slider-dots" id="sliderDots"></div>
                 </div>
 
-                <!-- СПИСОК ЗАЯВОК -->
+                <!-- LIST -->
                 <div id="requestsList">
-                    <div class="empty-state">У вас пока нет заявок</div>
-                </div>
-
-                <!-- ОТЗЫВ (показывается, если есть завершённая заявка) -->
-                <div id="reviewBlock" style="display:none; margin-top:20px;">
-                    <h3><i class="fas fa-star"></i> Оставить отзыв</h3>
-                    <div class="review-area">
-                        <textarea id="reviewText" placeholder="Напишите отзыв о курсе..." rows="3"></textarea>
-                        <button class="btn success sm" id="submitReview">Отправить отзыв</button>
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>У вас пока нет заявок</p>
                     </div>
-                    <div id="reviewMsg" class="hint"></div>
                 </div>
-            </section>
 
-            <!-- НОВАЯ ЗАЯВКА -->
-            <section class="page" id="page-new-request">
-                <h2><i class="fas fa-plus-circle"></i> Новая заявка</h2>
-                <div id="newRequestBlock">
-                    <form id="newRequestForm">
+                <!-- REVIEW -->
+                <div id="reviewBlock" style="display:none;">
+                    <div class="divider"></div>
+                    <h3>Оставить отзыв</h3>
+                    <div class="review-area">
+                        <textarea id="reviewText" placeholder="Напишите ваш отзыв..." rows="3"></textarea>
+                        <button class="btn success" id="submitReview">Отправить отзыв</button>
+                        <div id="reviewMsg" class="hint"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW REQUEST -->
+            <div class="page" id="page-new-request">
+                <div class="page-header">
+                    <h2>Новая заявка</h2>
+                </div>
+                <div id="newRequestFormBlock">
+                    <form id="newRequestForm" class="form">
                         <div class="field">
-                            <label><i class="fas fa-book-open"></i> Вид курса</label>
+                            <label>Вид курса</label>
                             <select id="requestCourse">
                                 <option value="">Выберите курс...</option>
                                 <option value="Повышение квалификации">Повышение квалификации</option>
@@ -135,12 +184,12 @@
                             </select>
                         </div>
                         <div class="field">
-                            <label><i class="fas fa-calendar-day"></i> Дата начала (ДД.ММ.ГГГГ)</label>
-                            <input type="text" id="requestDate" placeholder="01.09.2026">
+                            <label>Дата начала</label>
+                            <input type="text" id="requestDate" placeholder="ДД.ММ.ГГГГ" />
                             <div class="hint">Формат: ДД.ММ.ГГГГ</div>
                         </div>
                         <div class="field">
-                            <label><i class="fas fa-credit-card"></i> Способ оплаты</label>
+                            <label>Способ оплаты</label>
                             <select id="requestPayment">
                                 <option value="">Выберите способ...</option>
                                 <option value="Предоплата по QR-коду">Предоплата по QR-коду</option>
@@ -151,26 +200,30 @@
                         <button type="submit" class="btn primary">Отправить заявку</button>
                     </form>
                 </div>
-                <div id="newRequestGuest" style="display:none; text-align:center; padding:30px 0; color:#6c757d;">
-                    <i class="fas fa-lock" style="font-size:32px; display:block; margin-bottom:12px;"></i>
-                    <p>Чтобы оставить заявку, <button class="link-btn" data-page="login">войдите</button> или <button class="link-btn" data-page="register">зарегистрируйтесь</button></p>
+                <div id="newRequestGuest" style="display:none;">
+                    <div class="empty-state">
+                        <i class="fas fa-lock"></i>
+                        <p>Чтобы оставить заявку, <button class="link" data-page="login">войдите</button> или <button class="link" data-page="register">зарегистрируйтесь</button></p>
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- АДМИН -->
-            <section class="page" id="page-admin">
-                <h2><i class="fas fa-user-shield"></i> Панель администратора</h2>
+            <!-- ADMIN -->
+            <div class="page" id="page-admin">
+                <div class="page-header">
+                    <h2>Панель администратора</h2>
+                </div>
                 <div id="adminLoginBox">
-                    <form id="adminLoginForm">
+                    <form id="adminLoginForm" class="form">
                         <div class="field">
-                            <label><i class="fas fa-user"></i> Логин</label>
-                            <input type="text" id="adminUser" value="Admin26">
+                            <label>Логин</label>
+                            <input type="text" id="adminUser" value="Admin26" />
                         </div>
                         <div class="field">
-                            <label><i class="fas fa-lock"></i> Пароль</label>
-                            <input type="password" id="adminPass" value="Demo20">
+                            <label>Пароль</label>
+                            <input type="password" id="adminPass" value="Demo20" />
                         </div>
-                        <button type="submit" class="btn primary">Войти как админ</button>
+                        <button type="submit" class="btn primary">Войти</button>
                     </form>
                 </div>
                 <div id="adminPanel" style="display:none;">
@@ -186,16 +239,16 @@
                             <option value="date-asc">Сначала старые</option>
                             <option value="status">По статусу</option>
                         </select>
-                        <button class="btn danger sm" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                        <button class="btn danger" id="adminLogoutBtn">Выйти</button>
                     </div>
                     <div id="adminRequestsList"></div>
                     <div class="pagination" id="adminPagination"></div>
                 </div>
-            </section>
+            </div>
 
         </div><!-- /pages -->
 
-        <!-- TOAST-КОНТЕЙНЕР -->
+        <!-- TOAST -->
         <div id="toastContainer"></div>
     </div>
 

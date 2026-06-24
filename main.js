@@ -1,10 +1,8 @@
 /**
  * Учусь.РФ — вся логика
- * Хранилище: localStorage
- * Админ: Admin26 / Demo20
  */
 
-// ===== ДАННЫЕ =====
+// ===== STORE =====
 function getUsers() {
     let data = localStorage.getItem('users');
     if (!data) {
@@ -16,70 +14,50 @@ function getUsers() {
     return JSON.parse(data);
 }
 
-function saveUsers(users) {
-    localStorage.setItem('users', JSON.stringify(users));
-}
+function saveUsers(users) { localStorage.setItem('users', JSON.stringify(users)); }
 
-function getRequests() {
-    return JSON.parse(localStorage.getItem('requests') || '[]');
-}
+function getRequests() { return JSON.parse(localStorage.getItem('requests') || '[]'); }
+function saveRequests(r) { localStorage.setItem('requests', JSON.stringify(r)); }
 
-function saveRequests(requests) {
-    localStorage.setItem('requests', JSON.stringify(requests));
-}
+function getReviews() { return JSON.parse(localStorage.getItem('reviews') || '[]'); }
+function saveReviews(r) { localStorage.setItem('reviews', JSON.stringify(r)); }
 
-function getReviews() {
-    return JSON.parse(localStorage.getItem('reviews') || '[]');
-}
-
-function saveReviews(reviews) {
-    localStorage.setItem('reviews', JSON.stringify(reviews));
-}
-
-function genId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
-}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 4); }
 
 // ===== TOAST =====
 function toast(msg, type = 'info') {
-    const container = document.getElementById('toastContainer');
+    const c = document.getElementById('toastContainer');
     const el = document.createElement('div');
     el.className = `toast ${type}`;
     const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
     el.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg}`;
-    container.appendChild(el);
+    c.appendChild(el);
     setTimeout(() => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(10px)';
-        el.style.transition = '0.25s';
-        setTimeout(() => el.remove(), 300);
+        el.style.transform = 'translateY(8px)';
+        el.style.transition = '0.2s';
+        setTimeout(() => el.remove(), 250);
     }, 3500);
 }
 
-// ===== НАВИГАЦИЯ =====
+// ===== NAVIGATION =====
 function goTo(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const target = document.getElementById(`page-${pageId}`);
     if (target) target.classList.add('active');
 
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
     if (btn) btn.classList.add('active');
 
-    // Обновляем защищённые страницы
     if (pageId === 'requests') renderRequests();
-    if (pageId === 'new-request') checkNewRequestAccess();
+    if (pageId === 'new-request') checkNewRequest();
     if (pageId === 'admin') checkAdmin();
 }
 
-// ===== АВТОРИЗАЦИЯ =====
-function getCurrentUser() {
-    return sessionStorage.getItem('currentUser');
-}
-
-function isLoggedIn() {
-    return !!getCurrentUser();
-}
+// ===== USER =====
+function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
+function isLoggedIn() { return !!getCurrentUser(); }
 
 function updateUserUI() {
     const user = getCurrentUser();
@@ -96,24 +74,19 @@ function updateUserUI() {
         logoutBtn.style.display = 'none';
     }
 
-    // Показываем/скрываем кнопки
-    const protectedBtns = ['navRequests', 'navNewRequest'];
-    protectedBtns.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = isLoggedIn() ? 'inline-block' : 'none';
-    });
+    document.getElementById('navRequests').style.display = isLoggedIn() ? 'flex' : 'none';
+    document.getElementById('navNewRequest').style.display = isLoggedIn() ? 'flex' : 'none';
 }
 
-// Выход
 document.getElementById('logoutBtn').addEventListener('click', function() {
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('isAdmin');
     updateUserUI();
-    toast('Вы вышли', 'info');
+    toast('Вы вышли из системы', 'info');
     goTo('login');
 });
 
-// ===== РЕГИСТРАЦИЯ =====
+// ===== REGISTER =====
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -128,8 +101,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     loginErr.classList.remove('show');
     passErr.classList.remove('show');
 
-    const loginRegex = /^[a-zA-Z0-9]{6,}$/;
-    if (!loginRegex.test(login)) {
+    if (!/^[a-zA-Z0-9]{6,}$/.test(login)) {
         loginErr.textContent = 'Логин: ≥6 символов, только латиница и цифры';
         loginErr.classList.add('show');
         return;
@@ -150,12 +122,12 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
     users.push({ login, password: pass, fio, phone, email });
     saveUsers(users);
-    toast('Регистрация успешна! Войдите в систему.', 'success');
+    toast('Регистрация успешна! Войдите.', 'success');
     this.reset();
     goTo('login');
 });
 
-// ===== ВХОД =====
+// ===== LOGIN =====
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -179,9 +151,9 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     }
 });
 
-// ===== НОВАЯ ЗАЯВКА =====
-function checkNewRequestAccess() {
-    const block = document.getElementById('newRequestBlock');
+// ===== NEW REQUEST =====
+function checkNewRequest() {
+    const block = document.getElementById('newRequestFormBlock');
     const guest = document.getElementById('newRequestGuest');
     if (isLoggedIn()) {
         block.style.display = 'block';
@@ -221,8 +193,8 @@ document.getElementById('newRequestForm').addEventListener('submit', function(e)
         return;
     }
 
-    const requests = getRequests();
-    requests.push({
+    const reqs = getRequests();
+    reqs.push({
         id: genId(),
         user: getCurrentUser(),
         course,
@@ -231,19 +203,19 @@ document.getElementById('newRequestForm').addEventListener('submit', function(e)
         status: 'Новая',
         createdAt: new Date().toISOString()
     });
-    saveRequests(requests);
+    saveRequests(reqs);
     toast('Заявка отправлена!', 'success');
     this.reset();
     goTo('requests');
 });
 
-// ===== ЗАЯВКИ (личный кабинет) =====
+// ===== REQUESTS =====
 function renderRequests() {
     const container = document.getElementById('requestsList');
     const reviewBlock = document.getElementById('reviewBlock');
 
     if (!isLoggedIn()) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i> Войдите, чтобы увидеть заявки</div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -252,7 +224,7 @@ function renderRequests() {
     const userReqs = all.filter(r => r.user === getCurrentUser());
 
     if (userReqs.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-info-circle"></i> У вас пока нет заявок</div>`;
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -276,7 +248,6 @@ function renderRequests() {
                 <div class="request-meta">
                     <span><i class="fas fa-calendar-day"></i> ${r.date}</span>
                     <span><i class="fas fa-credit-card"></i> ${r.payment}</span>
-                    <span><i class="fas fa-clock"></i> ${new Date(r.createdAt).toLocaleDateString()}</span>
                 </div>
             </div>
         `;
@@ -284,7 +255,6 @@ function renderRequests() {
 
     container.innerHTML = html;
 
-    // Отзывы — только если есть завершённая заявка
     if (hasCompleted) {
         reviewBlock.style.display = 'block';
         const reviews = getReviews();
@@ -307,7 +277,7 @@ function renderRequests() {
     }
 }
 
-// ===== ОТЗЫВ =====
+// ===== REVIEW =====
 document.getElementById('submitReview').addEventListener('click', function() {
     if (!isLoggedIn()) {
         toast('Войдите в систему', 'error');
@@ -335,7 +305,7 @@ document.getElementById('submitReview').addEventListener('click', function() {
     document.getElementById('reviewMsg').textContent = '✅ Отзыв сохранён!';
 });
 
-// ===== СЛАЙДЕР =====
+// ===== SLIDER =====
 let slideIndex = 0;
 let slideTimer = null;
 
@@ -386,7 +356,7 @@ function startSlider() {
 document.getElementById('sliderPrev').addEventListener('click', () => { prevSlide(); startSlider(); });
 document.getElementById('sliderNext').addEventListener('click', () => { nextSlide(); startSlider(); });
 
-// ===== АДМИН =====
+// ===== ADMIN =====
 function checkAdmin() {
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
     document.getElementById('adminLoginBox').style.display = isAdmin ? 'none' : 'block';
@@ -404,7 +374,7 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
         toast('Вход в админ-панель', 'success');
         checkAdmin();
     } else {
-        toast('Неверный логин или пароль админа', 'error');
+        toast('Неверный логин или пароль', 'error');
     }
 });
 
@@ -445,7 +415,7 @@ function renderAdmin() {
     const pageItems = all.slice(start, start + perPage);
 
     if (pageItems.length === 0) {
-        container.innerHTML = '<div class="empty-state">Нет заявок</div>';
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Нет заявок</p></div>';
     } else {
         let html = '';
         const users = getUsers();
@@ -467,8 +437,8 @@ function renderAdmin() {
                         <span><i class="fas fa-credit-card"></i> ${r.payment}</span>
                     </div>
                     <div class="actions">
-                        ${r.status === 'Новая' ? `<button class="btn primary sm" onclick="changeStatus('${r.id}','Идет обучение')">Начать</button>` : ''}
-                        ${r.status === 'Идет обучение' ? `<button class="btn success sm" onclick="changeStatus('${r.id}','Обучение завершено')">Завершить</button>` : ''}
+                        ${r.status === 'Новая' ? `<button class="btn primary" onclick="changeStatus('${r.id}','Идет обучение')">Начать</button>` : ''}
+                        ${r.status === 'Идет обучение' ? `<button class="btn success" onclick="changeStatus('${r.id}','Обучение завершено')">Завершить</button>` : ''}
                     </div>
                 </div>
             `;
@@ -502,8 +472,8 @@ window.adminGoPage = function(page) {
 document.getElementById('adminFilter').addEventListener('change', () => { adminPage = 1; renderAdmin(); });
 document.getElementById('adminSort').addEventListener('change', () => { adminPage = 1; renderAdmin(); });
 
-// ===== СОБЫТИЯ НАВИГАЦИИ =====
-document.querySelectorAll('.nav-btn').forEach(btn => {
+// ===== NAV EVENTS =====
+document.querySelectorAll('.nav-item').forEach(btn => {
     btn.addEventListener('click', function() {
         const page = this.dataset.page;
         if ((page === 'requests' || page === 'new-request') && !isLoggedIn()) {
@@ -515,13 +485,13 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     });
 });
 
-document.querySelectorAll('.link-btn').forEach(btn => {
+document.querySelectorAll('.link').forEach(btn => {
     btn.addEventListener('click', function() {
         goTo(this.dataset.page);
     });
 });
 
-// ===== СТАРТ =====
+// ===== START =====
 document.addEventListener('DOMContentLoaded', function() {
     updateUserUI();
     initSlider();

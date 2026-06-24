@@ -12,246 +12,240 @@
 </head>
 <body>
 
-    <div class="app">
-        <!-- HEADER -->
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <span>Учусь.РФ</span>
-            </div>
-            <div class="user-info">
-                <span id="userName" class="user-name">Гость</span>
-                <button id="logoutBtn" class="logout-btn" style="display:none;">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
-        </header>
+<div class="app">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+            <span>Учусь.РФ</span>
+        </div>
+        <div class="user-info">
+            <span class="user-name" id="userName">Гость</span>
+            <button class="logout-btn" id="logoutBtn" style="display:none;">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
 
-        <!-- NAV -->
-        <nav class="nav" id="mainNav">
+    <!-- NAV -->
+    <nav class="nav" id="mainNav">
+        <div id="guestNav">
             <button class="nav-item active" data-page="login">
-                <i class="fas fa-sign-in-alt"></i>
-                <span>Вход</span>
+                <i class="fas fa-sign-in-alt"></i> <span>Вход</span>
             </button>
             <button class="nav-item" data-page="register">
-                <i class="fas fa-user-plus"></i>
-                <span>Регистрация</span>
+                <i class="fas fa-user-plus"></i> <span>Регистрация</span>
             </button>
-            <button class="nav-item" data-page="requests" id="navRequests">
-                <i class="fas fa-file-alt"></i>
-                <span>Заявки</span>
+        </div>
+        <div id="userNav" style="display:none;">
+            <button class="nav-item active" data-page="requests">
+                <i class="fas fa-file-alt"></i> <span>Заявки</span>
             </button>
-            <button class="nav-item" data-page="new-request" id="navNewRequest">
-                <i class="fas fa-plus-circle"></i>
-                <span>Новая</span>
+            <button class="nav-item" data-page="new-request">
+                <i class="fas fa-plus-circle"></i> <span>Новая</span>
             </button>
-            <button class="nav-item" data-page="admin">
-                <i class="fas fa-user-shield"></i>
-                <span>Админ</span>
-            </button>
-        </nav>
+        </div>
+        <button class="nav-item" data-page="admin">
+            <i class="fas fa-user-shield"></i> <span>Админ</span>
+        </button>
+    </nav>
 
-        <!-- PAGES -->
-        <div class="pages">
+    <!-- PAGES -->
+    <div class="pages">
 
-            <!-- LOGIN -->
-            <div class="page active" id="page-login">
-                <div class="page-header">
-                    <h2>Вход в систему</h2>
-                    <p class="subtitle">Войдите, чтобы продолжить</p>
+        <!-- LOGIN -->
+        <div class="page active" id="page-login">
+            <div class="page-header">
+                <h2>Вход в систему</h2>
+                <p class="subtitle">Войдите, чтобы продолжить</p>
+            </div>
+            <form id="loginForm" class="form">
+                <div class="field">
+                    <label>Логин</label>
+                    <input type="text" id="loginUser" placeholder="Введите логин" />
+                    <div class="error" id="loginError">Неверный логин или пароль</div>
                 </div>
-                <form id="loginForm" class="form">
+                <div class="field">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPass" placeholder="Введите пароль" />
+                </div>
+                <button type="submit" class="btn primary">Войти</button>
+            </form>
+            <div class="switch">
+                <button class="link" data-page="register">Ещё нет аккаунта? <strong>Регистрация</strong></button>
+            </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="page" id="page-register">
+            <div class="page-header">
+                <h2>Регистрация</h2>
+                <p class="subtitle">Создайте аккаунт</p>
+            </div>
+            <form id="registerForm" class="form">
+                <div class="field">
+                    <label>Логин</label>
+                    <input type="text" id="regLogin" placeholder="Латиница + цифры, ≥6" />
+                    <div class="error" id="regLoginError">Логин должен быть ≥6 символов, только латиница и цифры</div>
+                </div>
+                <div class="field">
+                    <label>Пароль</label>
+                    <input type="password" id="regPass" placeholder="Не менее 8 символов" />
+                    <div class="error" id="regPassError">Пароль должен быть ≥8 символов</div>
+                </div>
+                <div class="field">
+                    <label>ФИО</label>
+                    <input type="text" id="regFio" placeholder="Иванов Иван Иванович" />
+                </div>
+                <div class="field">
+                    <label>Телефон</label>
+                    <input type="text" id="regPhone" placeholder="+7 (999) 123-45-67" />
+                </div>
+                <div class="field">
+                    <label>E-mail</label>
+                    <input type="email" id="regEmail" placeholder="mail@example.com" />
+                </div>
+                <button type="submit" class="btn primary">Зарегистрироваться</button>
+            </form>
+            <div class="switch">
+                <button class="link" data-page="login">Уже есть аккаунт? <strong>Войти</strong></button>
+            </div>
+        </div>
+
+        <!-- REQUESTS -->
+        <div class="page" id="page-requests">
+            <div class="page-header">
+                <h2>Мои заявки</h2>
+            </div>
+
+            <!-- SLIDER -->
+            <div class="slider" id="mainSlider">
+                <div class="slider-track" id="sliderTrack">
+                    <div class="slide" style="background:#007bff;">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Повышение квалификации</span>
+                    </div>
+                    <div class="slide" style="background:#0d47a1;">
+                        <i class="fas fa-chalkboard-user"></i>
+                        <span>Профпереподготовка</span>
+                    </div>
+                    <div class="slide" style="background:#1a237e;">
+                        <i class="fas fa-hard-hat"></i>
+                        <span>Охрана труда</span>
+                    </div>
+                    <div class="slide" style="background:#0d3b6e;">
+                        <i class="fas fa-certificate"></i>
+                        <span>Сертификация</span>
+                    </div>
+                </div>
+                <button class="slider-btn prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
+
+            <div id="requestsList">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>У вас пока нет заявок</p>
+                </div>
+            </div>
+
+            <div id="reviewBlock" style="display:none;">
+                <div class="divider"></div>
+                <h3>Оставить отзыв</h3>
+                <div class="review-area">
+                    <textarea id="reviewText" placeholder="Напишите ваш отзыв..." rows="3"></textarea>
+                    <button class="btn success" id="submitReview">Отправить отзыв</button>
+                    <div id="reviewMsg" class="hint"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW REQUEST -->
+        <div class="page" id="page-new-request">
+            <div class="page-header">
+                <h2>Новая заявка</h2>
+            </div>
+            <div id="newRequestFormBlock">
+                <form id="newRequestForm" class="form">
+                    <div class="field">
+                        <label>Вид курса</label>
+                        <select id="requestCourse">
+                            <option value="">Выберите курс...</option>
+                            <option value="Повышение квалификации">Повышение квалификации</option>
+                            <option value="Профессиональная переподготовка">Профессиональная переподготовка</option>
+                            <option value="Охрана труда">Охрана труда</option>
+                            <option value="Пожарная безопасность">Пожарная безопасность</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Дата начала</label>
+                        <input type="text" id="requestDate" placeholder="ДД.ММ.ГГГГ" />
+                        <div class="hint">Формат: ДД.ММ.ГГГГ</div>
+                    </div>
+                    <div class="field">
+                        <label>Способ оплаты</label>
+                        <select id="requestPayment">
+                            <option value="">Выберите способ...</option>
+                            <option value="Предоплата по QR-коду">Предоплата по QR-коду</option>
+                            <option value="Оплата картой МИР">Оплата картой МИР</option>
+                            <option value="Постоплата в офисе">Постоплата в офисе</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn primary">Отправить заявку</button>
+                </form>
+            </div>
+            <div id="newRequestGuest" style="display:none;">
+                <div class="empty-state">
+                    <i class="fas fa-lock"></i>
+                    <p>Чтобы оставить заявку, <button class="link" data-page="login">войдите</button> или <button class="link" data-page="register">зарегистрируйтесь</button></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="page" id="page-admin">
+            <div class="page-header">
+                <h2>Панель администратора</h2>
+            </div>
+            <div id="adminLoginBox">
+                <form id="adminLoginForm" class="form">
                     <div class="field">
                         <label>Логин</label>
-                        <input type="text" id="loginUser" placeholder="Введите логин" />
-                        <div class="error" id="loginError">Неверный логин или пароль</div>
+                        <input type="text" id="adminUser" value="Admin26" />
                     </div>
                     <div class="field">
                         <label>Пароль</label>
-                        <input type="password" id="loginPass" placeholder="Введите пароль" />
+                        <input type="password" id="adminPass" value="Demo20" />
                     </div>
                     <button type="submit" class="btn primary">Войти</button>
                 </form>
-                <div class="switch">
-                    <button class="link" data-page="register">Ещё нет аккаунта? <strong>Регистрация</strong></button>
-                </div>
             </div>
-
-            <!-- REGISTER -->
-            <div class="page" id="page-register">
-                <div class="page-header">
-                    <h2>Регистрация</h2>
-                    <p class="subtitle">Создайте аккаунт</p>
+            <div id="adminPanel" style="display:none;">
+                <div class="admin-tools">
+                    <select id="adminFilter">
+                        <option value="all">Все статусы</option>
+                        <option value="Новая">Новая</option>
+                        <option value="Идет обучение">Идет обучение</option>
+                        <option value="Обучение завершено">Обучение завершено</option>
+                    </select>
+                    <select id="adminSort">
+                        <option value="date-desc">Сначала новые</option>
+                        <option value="date-asc">Сначала старые</option>
+                        <option value="status">По статусу</option>
+                    </select>
+                    <button class="btn danger" id="adminLogoutBtn">Выйти</button>
                 </div>
-                <form id="registerForm" class="form">
-                    <div class="field">
-                        <label>Логин</label>
-                        <input type="text" id="regLogin" placeholder="Латиница + цифры, ≥6" />
-                        <div class="error" id="regLoginError">Логин должен быть ≥6 символов, только латиница и цифры</div>
-                    </div>
-                    <div class="field">
-                        <label>Пароль</label>
-                        <input type="password" id="regPass" placeholder="Не менее 8 символов" />
-                        <div class="error" id="regPassError">Пароль должен быть ≥8 символов</div>
-                    </div>
-                    <div class="field">
-                        <label>ФИО</label>
-                        <input type="text" id="regFio" placeholder="Иванов Иван Иванович" />
-                    </div>
-                    <div class="field">
-                        <label>Телефон</label>
-                        <input type="text" id="regPhone" placeholder="+7 (999) 123-45-67" />
-                    </div>
-                    <div class="field">
-                        <label>E-mail</label>
-                        <input type="email" id="regEmail" placeholder="mail@example.com" />
-                    </div>
-                    <button type="submit" class="btn primary">Зарегистрироваться</button>
-                </form>
-                <div class="switch">
-                    <button class="link" data-page="login">Уже есть аккаунт? <strong>Войти</strong></button>
-                </div>
+                <div id="adminRequestsList"></div>
+                <div class="pagination" id="adminPagination"></div>
             </div>
+        </div>
 
-            <!-- REQUESTS -->
-            <div class="page" id="page-requests">
-                <div class="page-header">
-                    <h2>Мои заявки</h2>
-                </div>
-
-                <!-- SLIDER -->
-                <div class="slider" id="mainSlider">
-                    <div class="slider-track" id="sliderTrack">
-                        <div class="slide" style="background:#007bff;">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Повышение квалификации</span>
-                        </div>
-                        <div class="slide" style="background:#0d47a1;">
-                            <i class="fas fa-chalkboard-user"></i>
-                            <span>Профпереподготовка</span>
-                        </div>
-                        <div class="slide" style="background:#1a237e;">
-                            <i class="fas fa-hard-hat"></i>
-                            <span>Охрана труда</span>
-                        </div>
-                        <div class="slide" style="background:#0d3b6e;">
-                            <i class="fas fa-certificate"></i>
-                            <span>Сертификация</span>
-                        </div>
-                    </div>
-                    <button class="slider-btn prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
-                    <button class="slider-btn next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
-                    <div class="slider-dots" id="sliderDots"></div>
-                </div>
-
-                <!-- LIST -->
-                <div id="requestsList">
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>У вас пока нет заявок</p>
-                    </div>
-                </div>
-
-                <!-- REVIEW -->
-                <div id="reviewBlock" style="display:none;">
-                    <div class="divider"></div>
-                    <h3>Оставить отзыв</h3>
-                    <div class="review-area">
-                        <textarea id="reviewText" placeholder="Напишите ваш отзыв..." rows="3"></textarea>
-                        <button class="btn success" id="submitReview">Отправить отзыв</button>
-                        <div id="reviewMsg" class="hint"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- NEW REQUEST -->
-            <div class="page" id="page-new-request">
-                <div class="page-header">
-                    <h2>Новая заявка</h2>
-                </div>
-                <div id="newRequestFormBlock">
-                    <form id="newRequestForm" class="form">
-                        <div class="field">
-                            <label>Вид курса</label>
-                            <select id="requestCourse">
-                                <option value="">Выберите курс...</option>
-                                <option value="Повышение квалификации">Повышение квалификации</option>
-                                <option value="Профессиональная переподготовка">Профессиональная переподготовка</option>
-                                <option value="Охрана труда">Охрана труда</option>
-                                <option value="Пожарная безопасность">Пожарная безопасность</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label>Дата начала</label>
-                            <input type="text" id="requestDate" placeholder="ДД.ММ.ГГГГ" />
-                            <div class="hint">Формат: ДД.ММ.ГГГГ</div>
-                        </div>
-                        <div class="field">
-                            <label>Способ оплаты</label>
-                            <select id="requestPayment">
-                                <option value="">Выберите способ...</option>
-                                <option value="Предоплата по QR-коду">Предоплата по QR-коду</option>
-                                <option value="Оплата картой МИР">Оплата картой МИР</option>
-                                <option value="Постоплата в офисе">Постоплата в офисе</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn primary">Отправить заявку</button>
-                    </form>
-                </div>
-                <div id="newRequestGuest" style="display:none;">
-                    <div class="empty-state">
-                        <i class="fas fa-lock"></i>
-                        <p>Чтобы оставить заявку, <button class="link" data-page="login">войдите</button> или <button class="link" data-page="register">зарегистрируйтесь</button></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN -->
-            <div class="page" id="page-admin">
-                <div class="page-header">
-                    <h2>Панель администратора</h2>
-                </div>
-                <div id="adminLoginBox">
-                    <form id="adminLoginForm" class="form">
-                        <div class="field">
-                            <label>Логин</label>
-                            <input type="text" id="adminUser" value="Admin26" />
-                        </div>
-                        <div class="field">
-                            <label>Пароль</label>
-                            <input type="password" id="adminPass" value="Demo20" />
-                        </div>
-                        <button type="submit" class="btn primary">Войти</button>
-                    </form>
-                </div>
-                <div id="adminPanel" style="display:none;">
-                    <div class="admin-tools">
-                        <select id="adminFilter">
-                            <option value="all">Все статусы</option>
-                            <option value="Новая">Новая</option>
-                            <option value="Идет обучение">Идет обучение</option>
-                            <option value="Обучение завершено">Обучение завершено</option>
-                        </select>
-                        <select id="adminSort">
-                            <option value="date-desc">Сначала новые</option>
-                            <option value="date-asc">Сначала старые</option>
-                            <option value="status">По статусу</option>
-                        </select>
-                        <button class="btn danger" id="adminLogoutBtn">Выйти</button>
-                    </div>
-                    <div id="adminRequestsList"></div>
-                    <div class="pagination" id="adminPagination"></div>
-                </div>
-            </div>
-
-        </div><!-- /pages -->
-
-        <!-- TOAST -->
-        <div id="toastContainer"></div>
     </div>
 
-    <script src="main.js"></script>
+    <div id="toastContainer"></div>
+</div>
+
+<script src="main.js"></script>
 </body>
 </html>

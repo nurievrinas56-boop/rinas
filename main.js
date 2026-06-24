@@ -1,7 +1,3 @@
-/**
- * Учусь.РФ — вся логика
- */
-
 // ===== STORE =====
 function getUsers() {
     let data = localStorage.getItem('users');
@@ -14,12 +10,14 @@ function getUsers() {
     return JSON.parse(data);
 }
 
-function saveUsers(users) { localStorage.setItem('users', JSON.stringify(users)); }
+function saveUsers(u) { localStorage.setItem('users', JSON.stringify(u)); }
 
 function getRequests() { return JSON.parse(localStorage.getItem('requests') || '[]'); }
+
 function saveRequests(r) { localStorage.setItem('requests', JSON.stringify(r)); }
 
 function getReviews() { return JSON.parse(localStorage.getItem('reviews') || '[]'); }
+
 function saveReviews(r) { localStorage.setItem('reviews', JSON.stringify(r)); }
 
 function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 4); }
@@ -57,6 +55,7 @@ function goTo(pageId) {
 
 // ===== USER =====
 function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
+
 function isLoggedIn() { return !!getCurrentUser(); }
 
 function updateUserUI() {
@@ -73,9 +72,24 @@ function updateUserUI() {
         nameSpan.textContent = 'Гость';
         logoutBtn.style.display = 'none';
     }
+    updateNav();
+}
 
-    document.getElementById('navRequests').style.display = isLoggedIn() ? 'flex' : 'none';
-    document.getElementById('navNewRequest').style.display = isLoggedIn() ? 'flex' : 'none';
+function updateNav() {
+    const guestNav = document.getElementById('guestNav');
+    const userNav = document.getElementById('userNav');
+
+    if (isLoggedIn()) {
+        guestNav.style.display = 'none';
+        userNav.style.display = 'flex';
+        document.querySelectorAll('#userNav .nav-item').forEach(b => b.classList.remove('active'));
+        document.querySelector('#userNav .nav-item[data-page="requests"]')?.classList.add('active');
+    } else {
+        guestNav.style.display = 'flex';
+        userNav.style.display = 'none';
+        document.querySelectorAll('#guestNav .nav-item').forEach(b => b.classList.remove('active'));
+        document.querySelector('#guestNav .nav-item[data-page="login"]')?.classList.add('active');
+    }
 }
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -89,13 +103,11 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
 // ===== REGISTER =====
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     const login = document.getElementById('regLogin').value.trim();
     const pass = document.getElementById('regPass').value.trim();
     const fio = document.getElementById('regFio').value.trim();
     const phone = document.getElementById('regPhone').value.trim();
     const email = document.getElementById('regEmail').value.trim();
-
     const loginErr = document.getElementById('regLoginError');
     const passErr = document.getElementById('regPassError');
     loginErr.classList.remove('show');
@@ -106,20 +118,17 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         loginErr.classList.add('show');
         return;
     }
-
     const users = getUsers();
     if (users.some(u => u.login === login)) {
         loginErr.textContent = 'Такой логин уже занят';
         loginErr.classList.add('show');
         return;
     }
-
     if (pass.length < 8) {
         passErr.textContent = 'Пароль должен быть ≥8 символов';
         passErr.classList.add('show');
         return;
     }
-
     users.push({ login, password: pass, fio, phone, email });
     saveUsers(users);
     toast('Регистрация успешна! Войдите.', 'success');
@@ -130,7 +139,6 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 // ===== LOGIN =====
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     const login = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
     const err = document.getElementById('loginError');
@@ -138,7 +146,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 
     const users = getUsers();
     const found = users.find(u => u.login === login && u.password === pass);
-
     if (found) {
         sessionStorage.setItem('currentUser', login);
         updateUserUI();
@@ -166,33 +173,18 @@ function checkNewRequest() {
 
 document.getElementById('newRequestForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
-    if (!isLoggedIn()) {
-        toast('Войдите в систему', 'error');
-        return;
-    }
-
+    if (!isLoggedIn()) { toast('Войдите в систему', 'error'); return; }
     const course = document.getElementById('requestCourse').value;
     const date = document.getElementById('requestDate').value.trim();
     const payment = document.getElementById('requestPayment').value;
-
-    if (!course || !payment) {
-        toast('Заполните все поля', 'error');
-        return;
-    }
-
-    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
-        toast('Дата в формате ДД.ММ.ГГГГ', 'error');
-        return;
-    }
-
+    if (!course || !payment) { toast('Заполните все поля', 'error'); return; }
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(date)) { toast('Дата в формате ДД.ММ.ГГГГ', 'error'); return; }
     const parts = date.split('.');
     const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
     if (d.getDate() != parseInt(parts[0]) || d.getMonth() != parseInt(parts[1]) - 1) {
         toast('Некорректная дата', 'error');
         return;
     }
-
     const reqs = getRequests();
     reqs.push({
         id: genId(),
@@ -215,7 +207,8 @@ function renderRequests() {
     const reviewBlock = document.getElementById('reviewBlock');
 
     if (!isLoggedIn()) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
+        container.innerHTML =
+            `<div class="empty-state"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -224,7 +217,8 @@ function renderRequests() {
     const userReqs = all.filter(r => r.user === getCurrentUser());
 
     if (userReqs.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
+        container.innerHTML =
+        `<div class="empty-state"><i class="fas fa-inbox"></i><p>У вас пока нет заявок</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -236,7 +230,7 @@ function renderRequests() {
 
     userReqs.forEach(r => {
         const cls = r.status === 'Новая' ? 'status-new' :
-                    r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
+            r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
         if (r.status === 'Обучение завершено') hasCompleted = true;
 
         html += `
@@ -283,19 +277,16 @@ document.getElementById('submitReview').addEventListener('click', function() {
         toast('Войдите в систему', 'error');
         return;
     }
-
     const text = document.getElementById('reviewText').value.trim();
     if (!text) {
         toast('Напишите текст отзыва', 'error');
         return;
     }
-
     const reviews = getReviews();
     if (reviews.some(r => r.user === getCurrentUser())) {
         toast('Вы уже оставили отзыв', 'error');
         return;
     }
-
     reviews.push({ id: genId(), user: getCurrentUser(), text, createdAt: new Date().toISOString() });
     saveReviews(reviews);
     toast('Спасибо за отзыв!', 'success');
@@ -346,6 +337,7 @@ function goSlide(index) {
 }
 
 function nextSlide() { goSlide(slideIndex + 1); }
+
 function prevSlide() { goSlide(slideIndex - 1); }
 
 function startSlider() {
@@ -353,8 +345,10 @@ function startSlider() {
     slideTimer = setInterval(nextSlide, 3000);
 }
 
-document.getElementById('sliderPrev').addEventListener('click', () => { prevSlide(); startSlider(); });
-document.getElementById('sliderNext').addEventListener('click', () => { nextSlide(); startSlider(); });
+document.getElementById('sliderPrev').addEventListener('click', () => { prevSlide();
+    startSlider(); });
+document.getElementById('sliderNext').addEventListener('click', () => { nextSlide();
+    startSlider(); });
 
 // ===== ADMIN =====
 function checkAdmin() {
@@ -423,7 +417,7 @@ function renderAdmin() {
             const user = users.find(u => u.login === r.user);
             const name = user ? user.fio || r.user : r.user;
             const cls = r.status === 'Новая' ? 'status-new' :
-                        r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
+                r.status === 'Идет обучение' ? 'status-learning' : 'status-done';
 
             html += `
                 <div class="admin-request-item">
@@ -469,8 +463,10 @@ window.adminGoPage = function(page) {
     renderAdmin();
 };
 
-document.getElementById('adminFilter').addEventListener('change', () => { adminPage = 1; renderAdmin(); });
-document.getElementById('adminSort').addEventListener('change', () => { adminPage = 1; renderAdmin(); });
+document.getElementById('adminFilter').addEventListener('change', () => { adminPage = 1;
+    renderAdmin(); });
+document.getElementById('adminSort').addEventListener('change', () => { adminPage = 1;
+    renderAdmin(); });
 
 // ===== NAV EVENTS =====
 document.querySelectorAll('.nav-item').forEach(btn => {

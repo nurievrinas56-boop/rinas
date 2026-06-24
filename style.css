@@ -1,10 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* ============================================================
-   Учусь.РФ — современный минималистичный дизайн
-   ============================================================ */
-
-   * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -29,7 +25,7 @@ body {
     padding: 24px 20px 32px;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header {
     display: flex;
     justify-content: space-between;
@@ -91,7 +87,7 @@ body {
     color: #dc3545;
 }
 
-/* ===== NAV ===== */
+/* NAV */
 .nav {
     display: flex;
     gap: 4px;
@@ -99,6 +95,7 @@ body {
     background: #f1f5f9;
     border-radius: 16px;
     padding: 4px;
+    flex-wrap: wrap;
 }
 
 .nav-item {
@@ -117,6 +114,7 @@ body {
     cursor: pointer;
     transition: 0.15s;
     font-family: inherit;
+    min-width: 60px;
 }
 
 .nav-item i {
@@ -133,7 +131,14 @@ body {
     color: #0d47a1;
 }
 
-/* ===== PAGES ===== */
+#guestNav,
+#userNav {
+    display: flex;
+    flex: 2;
+    gap: 4px;
+}
+
+/* PAGES */
 .page {
     display: none;
 }
@@ -144,8 +149,14 @@ body {
 }
 
 @keyframes fade {
-    0% { opacity: 0; transform: translateY(4px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .page-header {
@@ -171,7 +182,7 @@ h3 {
     margin-bottom: 8px;
 }
 
-/* ===== FORM ===== */
+/* FORM */
 .form .field {
     margin-bottom: 14px;
 }
@@ -221,7 +232,7 @@ h3 {
     margin-top: 4px;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTONS */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -291,7 +302,7 @@ h3 {
     text-decoration: underline;
 }
 
-/* ===== REQUESTS ===== */
+/* REQUESTS */
 .request-card {
     background: #f8fafc;
     border-radius: 14px;
@@ -329,10 +340,12 @@ h3 {
     background: #dbeafe;
     color: #1d4ed8;
 }
+
 .status-learning {
     background: #fef3c7;
     color: #b45309;
 }
+
 .status-done {
     background: #d1fae5;
     color: #065f46;
@@ -369,7 +382,7 @@ h3 {
     font-size: 14px;
 }
 
-/* ===== SLIDER ===== */
+/* SLIDER */
 .slider {
     position: relative;
     border-radius: 16px;
@@ -421,8 +434,13 @@ h3 {
     background: #ffffff;
 }
 
-.slider-btn.prev { left: 8px; }
-.slider-btn.next { right: 8px; }
+.slider-btn.prev {
+    left: 8px;
+}
+
+.slider-btn.next {
+    right: 8px;
+}
 
 .slider-dots {
     position: absolute;
@@ -446,7 +464,7 @@ h3 {
     background: #ffffff;
 }
 
-/* ===== REVIEW ===== */
+/* REVIEW */
 .divider {
     height: 1px;
     background: #eef2f6;
@@ -482,7 +500,7 @@ h3 {
     padding: 8px 20px;
 }
 
-/* ===== ADMIN ===== */
+/* ADMIN */
 .admin-tools {
     display: flex;
     gap: 8px;
@@ -529,7 +547,7 @@ h3 {
     padding: 4px 14px;
 }
 
-/* ===== PAGINATION ===== */
+/* PAGINATION */
 .pagination {
     display: flex;
     gap: 6px;
@@ -559,7 +577,7 @@ h3 {
     background: #f1f5f9;
 }
 
-/* ===== TOAST ===== */
+/* TOAST */
 #toastContainer {
     position: fixed;
     bottom: 20px;
@@ -585,21 +603,48 @@ h3 {
     animation: slideUp 0.3s ease;
 }
 
-.toast i { font-size: 16px; }
-.toast.success { background: #22c55e; }
-.toast.error { background: #ef4444; }
-.toast.info { background: #007bff; }
-
-@keyframes slideUp {
-    0% { opacity: 0; transform: translateY(12px); }
-    100% { opacity: 1; transform: translateY(0); }
+.toast i {
+    font-size: 16px;
 }
 
-/* ===== RESPONSIVE ===== */
+.toast.success {
+    background: #22c55e;
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+.toast.info {
+    background: #007bff;
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 420px) {
-    .app { padding: 16px; }
-    .nav-item { font-size: 11px; padding: 6px 2px; }
-    .nav-item span { display: none; }
-    .nav-item i { font-size: 16px; }
-    .logo span { font-size: 16px; }
+    .app {
+        padding: 16px;
+    }
+    .nav-item {
+        font-size: 11px;
+        padding: 6px 2px;
+    }
+    .nav-item span {
+        display: none;
+    }
+    .nav-item i {
+        font-size: 16px;
+    }
+    .logo span {
+        font-size: 16px;
+    }
 }

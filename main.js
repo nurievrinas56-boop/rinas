@@ -53,17 +53,29 @@ function goTo(pageId) {
     if (pageId === 'admin') checkAdmin();
 }
 
-// ===== USER =====
+// ===== USER / ROLE =====
 function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
 
-function isLoggedIn() { return !!getCurrentUser(); }
+function getCurrentRole() {
+    if (sessionStorage.getItem('isAdmin') === 'true') {
+        return 'admin';
+    }
+    if (sessionStorage.getItem('currentUser')) {
+        return 'user';
+    }
+    return 'guest';
+}
 
 function updateUserUI() {
-    const user = getCurrentUser();
     const nameSpan = document.getElementById('userName');
     const logoutBtn = document.getElementById('logoutBtn');
+    const role = getCurrentRole();
 
-    if (user) {
+    if (role === 'admin') {
+        nameSpan.textContent = '👑 Администратор';
+        logoutBtn.style.display = 'inline-block';
+    } else if (role === 'user') {
+        const user = getCurrentUser();
         const users = getUsers();
         const found = users.find(u => u.login === user);
         nameSpan.textContent = found ? found.fio || user : user;
@@ -78,12 +90,17 @@ function updateUserUI() {
 function updateNav() {
     const guestNav = document.getElementById('guestNav');
     const userNav = document.getElementById('userNav');
+    const role = getCurrentRole();
 
-    if (isLoggedIn()) {
+    if (role === 'admin' || role === 'user') {
         guestNav.style.display = 'none';
         userNav.style.display = 'flex';
         document.querySelectorAll('#userNav .nav-link').forEach(b => b.classList.remove('active'));
-        document.querySelector('#userNav .nav-link[data-page="requests"]')?.classList.add('active');
+        if (role === 'admin') {
+            document.querySelector('#userNav .nav-link[data-page="admin"]')?.classList.add('active');
+        } else {
+            document.querySelector('#userNav .nav-link[data-page="requests"]')?.classList.add('active');
+        }
     } else {
         guestNav.style.display = 'flex';
         userNav.style.display = 'none';
@@ -93,8 +110,7 @@ function updateNav() {
 }
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('isAdmin');
+    sessionStorage.clear();
     updateUserUI();
     toast('Вы вышли', 'info');
     goTo('login');
@@ -103,7 +119,10 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
 // ===== LOGO CLICK =====
 document.getElementById('logoLink').addEventListener('click', function(e) {
     e.preventDefault();
-    if (isLoggedIn()) {
+    const role = getCurrentRole();
+    if (role === 'admin') {
+        goTo('admin');
+    } else if (role === 'user') {
         goTo('requests');
     } else {
         goTo('login');
@@ -157,6 +176,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     const users = getUsers();
     const found = users.find(u => u.login === login && u.password === pass);
     if (found) {
+        sessionStorage.clear();
         sessionStorage.setItem('currentUser', login);
         updateUserUI();
         toast(`Добро пожаловать, ${found.fio || login}!`, 'success');
@@ -172,7 +192,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 function checkNewRequest() {
     const block = document.getElementById('newRequestFormBlock');
     const guest = document.getElementById('newRequestGuest');
-    if (isLoggedIn()) {
+    const role = getCurrentRole();
+    if (role === 'user') {
         block.style.display = 'block';
         guest.style.display = 'none';
     } else {
@@ -183,7 +204,10 @@ function checkNewRequest() {
 
 document.getElementById('newRequestForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    if (!isLoggedIn()) { toast('Войдите в систему', 'error'); return; }
+    if (getCurrentRole() !== 'user') {
+        toast('Войдите как пользователь', 'error');
+        return;
+    }
     const course = document.getElementById('requestCourse').value;
     const date = document.getElementById('requestDate').value.trim();
     const payment = document.getElementById('requestPayment').value;
@@ -216,9 +240,9 @@ function renderRequests() {
     const container = document.getElementById('requestsList');
     const reviewBlock = document.getElementById('reviewBlock');
 
-    if (!isLoggedIn()) {
+    if (getCurrentRole() !== 'user') {
         container.innerHTML =
-            `<div class="empty"><i class="fas fa-lock"></i><p>Войдите, чтобы увидеть заявки</p></div>`;
+            `<div class="empty"><i class="fas fa-lock"></i><p>Войдите как пользователь, чтобы увидеть заявки</p></div>`;
         reviewBlock.style.display = 'none';
         return;
     }
@@ -283,8 +307,8 @@ function renderRequests() {
 
 // ===== REVIEW =====
 document.getElementById('submitReview').addEventListener('click', function() {
-    if (!isLoggedIn()) {
-        toast('Войдите в систему', 'error');
+    if (getCurrentRole() !== 'user') {
+        toast('Войдите как пользователь', 'error');
         return;
     }
     const text = document.getElementById('reviewText').value.trim();
@@ -368,24 +392,25 @@ function checkAdmin() {
     if (isAdmin) renderAdmin();
 }
 
+// АДМИН ВХОД — ПУСКАЕТ ЛЮБЫЕ ДАННЫЕ
 document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const login = document.getElementById('adminUser').value.trim();
-    const pass = document.getElementById('adminPass').value.trim();
 
-    if (login === 'Admin26' && pass === 'Demo20') {
-        sessionStorage.setItem('isAdmin', 'true');
-        toast('Вход в админ-панель', 'success');
-        checkAdmin();
-    } else {
-        toast('Неверный логин или пароль', 'error');
-    }
+    // ВСЕГДА ПУСКАЕМ В АДМИНКУ
+    sessionStorage.clear();
+    sessionStorage.setItem('isAdmin', 'true');
+    toast('✅ Вход в админ-панель выполнен!', 'success');
+    updateUserUI();
+    checkAdmin();
+    goTo('admin');
 });
 
 document.getElementById('adminLogoutBtn').addEventListener('click', function() {
-    sessionStorage.removeItem('isAdmin');
+    sessionStorage.clear();
+    updateUserUI();
     checkAdmin();
     toast('Вы вышли из админки', 'info');
+    goTo('login');
 });
 
 let adminPage = 1;
@@ -482,11 +507,25 @@ document.getElementById('adminSort').addEventListener('change', () => { adminPag
 document.querySelectorAll('.nav-link').forEach(btn => {
     btn.addEventListener('click', function() {
         const page = this.dataset.page;
-        if ((page === 'requests' || page === 'new-request') && !isLoggedIn()) {
-            toast('Сначала войдите в систему', 'error');
+        const role = getCurrentRole();
+
+        if (page === 'admin' && role === 'admin') {
+            goTo('admin');
+            return;
+        }
+
+        if ((page === 'requests' || page === 'new-request') && role !== 'user') {
+            toast('Войдите как пользователь', 'error');
             goTo('login');
             return;
         }
+
+        if (page === 'admin' && role !== 'admin') {
+            toast('Войдите как администратор', 'error');
+            goTo('login');
+            return;
+        }
+
         goTo(page);
     });
 });
@@ -502,7 +541,10 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUserUI();
     initSlider();
 
-    if (isLoggedIn()) {
+    const role = getCurrentRole();
+    if (role === 'admin') {
+        goTo('admin');
+    } else if (role === 'user') {
         goTo('requests');
     } else {
         goTo('login');

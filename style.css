@@ -576,6 +576,26 @@ hr {
     background: #007bff;
 }
 
+.logo img {
+    height: 44px;
+    width: auto;
+    border-radius: 10px;
+    display: block;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logo span {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0d47a1;
+}
 @keyframes slideUp {
     0% {
         opacity: 0;

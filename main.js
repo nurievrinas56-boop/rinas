@@ -47,30 +47,49 @@ function getCurrentRole() {
     return 'guest';
 }
 
-function updateUserUI() {
-    const nameSpan = document.getElementById('userName');
-    const logoutBtn = document.getElementById('logoutBtn');
+// ===== УПРАВЛЕНИЕ НАВИГАЦИЕЙ =====
+function updateNav() {
     const role = getCurrentRole();
+    const navLogin = document.getElementById('navLogin');
+    const navRegister = document.getElementById('navRegister');
+    const navRequests = document.getElementById('navRequests');
+    const navNewRequest = document.getElementById('navNewRequest');
+    const userName = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
 
+    // Обновляем имя пользователя и кнопку выхода
     if (role === 'admin') {
-        nameSpan.textContent = '👑 Администратор';
+        if (userName) userName.textContent = '👑 Администратор';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else if (role === 'user') {
         const user = getCurrentUser();
         const users = getUsers();
         const found = users.find(u => u.login === user);
-        nameSpan.textContent = found ? found.fio || user : user;
+        if (userName) userName.textContent = found ? found.fio || user : user;
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
-        nameSpan.textContent = 'Гость';
+        if (userName) userName.textContent = 'Гость';
         if (logoutBtn) logoutBtn.style.display = 'none';
+    }
+
+    // Показываем/скрываем пункты меню
+    if (role === 'user' || role === 'admin') {
+        if (navLogin) navLogin.style.display = 'none';
+        if (navRegister) navRegister.style.display = 'none';
+        if (navRequests) navRequests.style.display = 'flex';
+        if (navNewRequest) navNewRequest.style.display = 'flex';
+    } else {
+        if (navLogin) navLogin.style.display = 'flex';
+        if (navRegister) navRegister.style.display = 'flex';
+        if (navRequests) navRequests.style.display = 'none';
+        if (navNewRequest) navNewRequest.style.display = 'none';
     }
 }
 
-// ===== LOGOUT =====
+// ===== КНОПКА ВЫЙТИ =====
 document.getElementById('logoutBtn')?.addEventListener('click', function() {
     sessionStorage.clear();
-    updateUserUI();
+    updateNav();
     toast('Вы вышли', 'info');
     window.location.href = 'index.html';
 });
@@ -124,7 +143,6 @@ document.getElementById('loginForm')?.addEventListener('submit', function(e) {
     if (found) {
         sessionStorage.clear();
         sessionStorage.setItem('currentUser', login);
-        updateUserUI();
         toast(`Добро пожаловать, ${found.fio || login}!`, 'success');
         this.reset();
         window.location.href = 'cabinet.html';
@@ -222,7 +240,7 @@ function renderRequests() {
 
     container.innerHTML = html;
 
-    // Отзывы
+    // ===== ОТЗЫВЫ =====
     const allReviews = getReviews();
     const userReviews = allReviews.filter(r => r.user === getCurrentUser());
 
@@ -242,6 +260,7 @@ function renderRequests() {
         container.insertAdjacentHTML('afterend', reviewHtml);
     }
 
+    // ===== БЛОК НОВОГО ОТЗЫВА =====
     if (reviewBlock) {
         if (hasCompleted) {
             reviewBlock.style.display = 'block';
@@ -249,6 +268,7 @@ function renderRequests() {
             const textarea = document.getElementById('reviewText');
             const submitBtn = document.getElementById('submitReview');
             const msg = document.getElementById('reviewMsg');
+
             if (already) {
                 textarea.disabled = true;
                 submitBtn.disabled = true;
@@ -264,25 +284,34 @@ function renderRequests() {
     }
 }
 
+// ===== ОТПРАВКА ОТЗЫВА =====
 document.getElementById('submitReview')?.addEventListener('click', function() {
     if (getCurrentRole() !== 'user') {
         toast('Войдите как пользователь', 'error');
         return;
     }
+
     const text = document.getElementById('reviewText').value.trim();
-    if (!text) { toast('Напишите текст отзыва', 'error'); return; }
+    if (!text) {
+        toast('Напишите текст отзыва', 'error');
+        return;
+    }
+
     const reviews = getReviews();
     if (reviews.some(r => r.user === getCurrentUser())) {
         toast('Вы уже оставили отзыв', 'error');
         return;
     }
+
     reviews.push({ id: genId(), user: getCurrentUser(), text, createdAt: new Date().toISOString() });
     saveReviews(reviews);
+
     toast('Спасибо за отзыв!', 'success');
     document.getElementById('reviewText').value = '';
     document.getElementById('reviewText').disabled = true;
     this.disabled = true;
     document.getElementById('reviewMsg').textContent = '✅ Отзыв сохранён!';
+
     setTimeout(() => renderRequests(), 300);
 });
 
@@ -339,7 +368,7 @@ document.getElementById('sliderNext')?.addEventListener('click', () => { nextSli
 
 // ===== START =====
 document.addEventListener('DOMContentLoaded', function() {
-    updateUserUI();
+    updateNav();
     initSlider();
 
     // Если мы на странице заявок — рендерим

@@ -1,6 +1,4 @@
-// ===== АДМИН — ОТДЕЛЬНАЯ ЛОГИКА =====
-
-// Функции из main.js (дублируем, чтобы работало)
+// ===== STORE =====
 function getUsers() {
     let data = localStorage.getItem('users');
     if (!data) {
@@ -16,6 +14,7 @@ function getRequests() { return JSON.parse(localStorage.getItem('requests') || '
 
 function saveRequests(r) { localStorage.setItem('requests', JSON.stringify(r)); }
 
+// ===== TOAST =====
 function toast(msg, type = 'info') {
     const c = document.getElementById('toastContainer');
     const el = document.createElement('div');
@@ -31,6 +30,7 @@ function toast(msg, type = 'info') {
     }, 3500);
 }
 
+// ===== USER / ROLE =====
 function getCurrentUser() { return sessionStorage.getItem('currentUser'); }
 
 function getCurrentRole() {
@@ -39,25 +39,29 @@ function getCurrentRole() {
     return 'guest';
 }
 
-function updateUserUI() {
+// ===== ОБНОВЛЕНИЕ ИНТЕРФЕЙСА В АДМИНКЕ =====
+function updateAdminUI() {
     const nameSpan = document.getElementById('userName');
     const logoutBtn = document.getElementById('logoutBtn');
     const role = getCurrentRole();
 
+    // В АДМИНКЕ ВСЕГДА ПОКАЗЫВАЕМ ТОЛЬКО АДМИНА ИЛИ ГОСТЯ
     if (role === 'admin') {
         nameSpan.textContent = '👑 Администратор';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    } else if (role === 'user') {
-        const user = getCurrentUser();
-        const users = getUsers();
-        const found = users.find(u => u.login === user);
-        nameSpan.textContent = found ? found.fio || user : user;
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
         nameSpan.textContent = 'Гость';
         if (logoutBtn) logoutBtn.style.display = 'none';
     }
 }
+
+// ===== КНОПКА ВЫЙТИ =====
+document.getElementById('logoutBtn')?.addEventListener('click', function() {
+    sessionStorage.clear();
+    updateAdminUI();
+    toast('Вы вышли', 'info');
+    window.location.href = 'index.html';
+});
 
 // ===== АДМИН-ПРОВЕРКА =====
 function checkAdmin() {
@@ -68,10 +72,14 @@ function checkAdmin() {
     if (loginBox) loginBox.style.display = isAdmin ? 'none' : 'block';
     if (panel) panel.style.display = isAdmin ? 'block' : 'none';
 
-    if (isAdmin) renderAdmin();
+    if (isAdmin) {
+        renderAdmin();
+        // Принудительно обновляем UI
+        updateAdminUI();
+    }
 }
 
-// ===== ВХОД В АДМИНКУ — ПРОВЕРКА ПО ТЗ =====
+// ===== ВХОД В АДМИНКУ =====
 document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -79,14 +87,12 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
     const pass = document.getElementById('adminPass').value.trim();
     const errorEl = document.getElementById('adminErrorMsg');
 
-    console.log('Админ-вход:', login, pass);
-
     if (login === 'Admin26' && pass === 'Demo20') {
         sessionStorage.clear();
         sessionStorage.setItem('isAdmin', 'true');
 
         toast('✅ Вход в админ-панель выполнен!', 'success');
-        updateUserUI();
+        updateAdminUI();
         checkAdmin();
     } else {
         errorEl.style.display = 'block';
@@ -101,17 +107,9 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
 // ===== ВЫХОД ИЗ АДМИНКИ =====
 document.getElementById('adminLogoutBtn').addEventListener('click', function() {
     sessionStorage.clear();
-    updateUserUI();
+    updateAdminUI();
     checkAdmin();
     toast('Вы вышли из админки', 'info');
-    window.location.href = 'index.html';
-});
-
-// ===== ВЫХОД (общий) =====
-document.getElementById('logoutBtn')?.addEventListener('click', function() {
-    sessionStorage.clear();
-    updateUserUI();
-    toast('Вы вышли', 'info');
     window.location.href = 'index.html';
 });
 
@@ -206,6 +204,6 @@ document.getElementById('adminSort').addEventListener('change', () => { adminPag
 
 // ===== СТАРТ =====
 document.addEventListener('DOMContentLoaded', function() {
-    updateUserUI();
+    updateAdminUI();
     checkAdmin();
 });

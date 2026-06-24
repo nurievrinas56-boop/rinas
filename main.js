@@ -60,7 +60,7 @@ function updateUI() {
 
     // Имя и кнопка выхода
     if (role === 'admin') {
-        if (userName) userName.textContent = '👑 Администратор';
+        if (userName) userName.textContent = 'Администратор';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else if (role === 'user') {
         const user = getCurrentUser();
@@ -90,7 +90,7 @@ function updateUI() {
 // ===== ВЫХОД =====
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
-    logoutBtn.addEventListener('click', function() {
+    logoutBtn.addEventListener('click', function () {
         sessionStorage.clear();
         updateUI();
         toast('Вы вышли', 'info');
@@ -101,7 +101,7 @@ if (logoutBtn) {
 // ===== РЕГИСТРАЦИЯ =====
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const login = document.getElementById('regLogin').value.trim();
         const pass = document.getElementById('regPass').value.trim();
@@ -114,19 +114,25 @@ if (registerForm) {
         if (passErr) passErr.classList.remove('show');
 
         if (!/^[a-zA-Z0-9]{6,}$/.test(login)) {
-            if (loginErr) { loginErr.textContent = 'Логин: ≥6 символов, только латиница и цифры';
-            loginErr.classList.add('show'); }
+            if (loginErr) {
+                loginErr.textContent = 'Логин: ≥6 символов, только латиница и цифры';
+                loginErr.classList.add('show');
+            }
             return;
         }
         const users = getUsers();
         if (users.some(u => u.login === login)) {
-            if (loginErr) { loginErr.textContent = 'Такой логин уже занят';
-            loginErr.classList.add('show'); }
+            if (loginErr) {
+                loginErr.textContent = 'Такой логин уже занят';
+                loginErr.classList.add('show');
+            }
             return;
         }
         if (pass.length < 8) {
-            if (passErr) { passErr.textContent = 'Пароль должен быть ≥8 символов';
-            passErr.classList.add('show'); }
+            if (passErr) {
+                passErr.textContent = 'Пароль должен быть ≥8 символов';
+                passErr.classList.add('show');
+            }
             return;
         }
         users.push({ login, password: pass, fio, phone, email });
@@ -140,7 +146,7 @@ if (registerForm) {
 // ===== ВХОД =====
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const login = document.getElementById('loginUser').value.trim();
         const pass = document.getElementById('loginPass').value.trim();
@@ -156,8 +162,10 @@ if (loginForm) {
             this.reset();
             window.location.href = 'cabinet.html';
         } else {
-            if (err) { err.textContent = 'Неверный логин или пароль';
-            err.classList.add('show'); }
+            if (err) {
+                err.textContent = 'Неверный логин или пароль';
+                err.classList.add('show');
+            }
         }
     });
 }
@@ -180,7 +188,7 @@ function checkNewRequest() {
 
 const newRequestForm = document.getElementById('newRequestForm');
 if (newRequestForm) {
-    newRequestForm.addEventListener('submit', function(e) {
+    newRequestForm.addEventListener('submit', function (e) {
         e.preventDefault();
         if (getCurrentRole() !== 'user') {
             toast('Войдите как пользователь', 'error');
@@ -261,7 +269,7 @@ function renderRequests() {
     const userReviews = allReviews.filter(r => r.user === getCurrentUser());
 
     if (userReviews.length > 0) {
-        let reviewHtml = `<div style="margin-top:16px;"><h3>📝 Мои отзывы</h3>`;
+        let reviewHtml = `<div style="margin-top:16px;"><h3>Мои отзывы</h3>`;
         userReviews.forEach(r => {
             reviewHtml += `
                 <div style="background:#f8fafc; border-radius:12px; padding:12px 16px; margin-bottom:8px; border-left:3px solid #22c55e;">
@@ -288,7 +296,7 @@ function renderRequests() {
             if (already) {
                 if (textarea) textarea.disabled = true;
                 if (submitBtn) submitBtn.disabled = true;
-                if (msg) msg.textContent = '✅ Вы уже оставили отзыв. Спасибо!';
+                if (msg) msg.textContent = 'Вы уже оставили отзыв. Спасибо!';
             } else {
                 if (textarea) textarea.disabled = false;
                 if (submitBtn) submitBtn.disabled = false;
@@ -303,7 +311,7 @@ function renderRequests() {
 // ===== ОТПРАВКА ОТЗЫВА =====
 const submitReviewBtn = document.getElementById('submitReview');
 if (submitReviewBtn) {
-    submitReviewBtn.addEventListener('click', function() {
+    submitReviewBtn.addEventListener('click', function () {
         if (getCurrentRole() !== 'user') {
             toast('Войдите как пользователь', 'error');
             return;
@@ -331,7 +339,7 @@ if (submitReviewBtn) {
         textarea.disabled = true;
         this.disabled = true;
         const msg = document.getElementById('reviewMsg');
-        if (msg) msg.textContent = '✅ Отзыв сохранён!';
+        if (msg) msg.textContent = 'Отзыв сохранён!';
 
         setTimeout(() => renderRequests(), 300);
     });
@@ -385,13 +393,17 @@ function startSlider() {
 
 const sliderPrev = document.getElementById('sliderPrev');
 const sliderNext = document.getElementById('sliderNext');
-if (sliderPrev) sliderPrev.addEventListener('click', () => { prevSlide();
-    startSlider(); });
-if (sliderNext) sliderNext.addEventListener('click', () => { nextSlide();
-    startSlider(); });
+if (sliderPrev) sliderPrev.addEventListener('click', () => {
+    prevSlide();
+    startSlider();
+});
+if (sliderNext) sliderNext.addEventListener('click', () => {
+    nextSlide();
+    startSlider();
+});
 
 // ===== СТАРТ =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateUI();
     initSlider();
 

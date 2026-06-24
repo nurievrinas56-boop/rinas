@@ -44,7 +44,7 @@ function updateAdminUI() {
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
     if (isAdmin) {
-        nameSpan.textContent = '👑 Администратор';
+        nameSpan.textContent = 'Администратор';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
         nameSpan.textContent = 'Гость';
@@ -52,7 +52,7 @@ function updateAdminUI() {
     }
 }
 
-document.getElementById('logoutBtn')?.addEventListener('click', function() {
+document.getElementById('logoutBtn')?.addEventListener('click', function () {
     sessionStorage.clear();
     updateAdminUI();
     toast('Вы вышли', 'info');
@@ -74,7 +74,7 @@ function checkAdmin() {
 }
 
 // ===== ВХОД В АДМИНКУ =====
-document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+document.getElementById('adminLoginForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const login = document.getElementById('adminUser').value.trim();
@@ -97,7 +97,7 @@ document.getElementById('adminLoginForm').addEventListener('submit', function(e)
     }
 });
 
-document.getElementById('adminLogoutBtn').addEventListener('click', function() {
+document.getElementById('adminLogoutBtn').addEventListener('click', function () {
     sessionStorage.clear();
     updateAdminUI();
     checkAdmin();
@@ -174,7 +174,7 @@ function renderAdmin() {
     pagination.innerHTML = pagHtml;
 }
 
-window.changeStatus = function(id, newStatus) {
+window.changeStatus = function (id, newStatus) {
     const reqs = getRequests();
     const idx = reqs.findIndex(r => r.id === id);
     if (idx === -1) return;
@@ -184,18 +184,22 @@ window.changeStatus = function(id, newStatus) {
     renderAdmin();
 };
 
-window.adminGoPage = function(page) {
+window.adminGoPage = function (page) {
     adminPage = page;
     renderAdmin();
 };
 
-document.getElementById('adminFilter').addEventListener('change', () => { adminPage = 1;
-    renderAdmin(); });
-document.getElementById('adminSort').addEventListener('change', () => { adminPage = 1;
-    renderAdmin(); });
+document.getElementById('adminFilter').addEventListener('change', () => {
+    adminPage = 1;
+    renderAdmin();
+});
+document.getElementById('adminSort').addEventListener('change', () => {
+    adminPage = 1;
+    renderAdmin();
+});
 
 // ===== СТАРТ =====
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateAdminUI();
     checkAdmin();
 });

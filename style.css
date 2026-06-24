@@ -596,6 +596,23 @@ hr {
     font-weight: 700;
     color: #0d47a1;
 }
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 10px;
+    transition: 0.15s;
+}
+
+.btn-icon:hover {
+    color: #dc3545;
+    background: #f1f5f9;
+}
+
 @keyframes slideUp {
     0% {
         opacity: 0;

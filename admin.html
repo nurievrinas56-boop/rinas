@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Админ-панель — Учусь.РФ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
     <div id="app">
-       <header class="topbar">
-    <div class="logo">
-        <img src="./img/students_corner.png" alt="Учусь.РФ" style="height:44px; width:auto; border-radius:10px;" />
-        <span>Учусь.РФ</span>
-    </div>
-    <div class="topbar-right">
-        <span id="userName">Гость</span>
-    </div>
-</header>
+        <header class="topbar">
+            <div class="logo">
+                <img src="./img/students_corner.png" alt="Учусь.РФ"
+                    style="height:44px; width:auto; border-radius:10px;" />
+                <span>Учусь.РФ</span>
+            </div>
+            <div class="topbar-right">
+                <span id="userName">Гость</span>
+            </div>
+        </header>
 
         <div class="page-head">
             <h2><i class="fas fa-user-shield"></i> Панель администратора</h2>
@@ -36,7 +41,9 @@
                     <input type="password" id="adminPass" value="Demo20" placeholder="Пароль" />
                 </div>
                 <button type="submit" class="btn primary">Войти</button>
-                <div id="adminErrorMsg" style="color:#dc3545; font-size:14px; margin-top:8px; text-align:center; font-weight:500; display:none;"></div>
+                <div id="adminErrorMsg"
+                    style="color:#dc3545; font-size:14px; margin-top:8px; text-align:center; font-weight:500; display:none;">
+                </div>
             </form>
         </div>
 
@@ -64,4 +71,5 @@
 
     <script src="admin.js"></script>
 </body>
+
 </html>

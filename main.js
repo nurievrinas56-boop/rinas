@@ -283,10 +283,30 @@ function renderRequests() {
 
     container.innerHTML = html;
 
+    // ===== ПОКАЗЫВАЕМ РАНЕЕ ОСТАВЛЕННЫЕ ОТЗЫВЫ =====
+    const allReviews = getReviews();
+    const userReviews = allReviews.filter(r => r.user === getCurrentUser());
+
+    if (userReviews.length > 0) {
+        let reviewHtml = `<div style="margin-top:16px;"><h3>📝 Мои отзывы</h3>`;
+        userReviews.forEach(r => {
+            reviewHtml += `
+                <div style="background:#f8fafc; border-radius:12px; padding:12px 16px; margin-bottom:8px; border-left:3px solid #22c55e;">
+                    <div style="font-size:14px; color:#1e293b;">${r.text}</div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
+                        <i class="fas fa-clock"></i> ${new Date(r.createdAt).toLocaleDateString()}
+                    </div>
+                </div>
+            `;
+        });
+        reviewHtml += `</div>`;
+        container.insertAdjacentHTML('afterend', reviewHtml);
+    }
+
+    // ===== БЛОК ДЛЯ НОВОГО ОТЗЫВА =====
     if (hasCompleted) {
         reviewBlock.style.display = 'block';
-        const reviews = getReviews();
-        const already = reviews.some(r => r.user === getCurrentUser());
+        const already = userReviews.some(r => r.user === getCurrentUser());
         const textarea = document.getElementById('reviewText');
         const submitBtn = document.getElementById('submitReview');
         const msg = document.getElementById('reviewMsg');
@@ -328,6 +348,7 @@ document.getElementById('submitReview').addEventListener('click', function() {
     document.getElementById('reviewText').disabled = true;
     this.disabled = true;
     document.getElementById('reviewMsg').textContent = '✅ Отзыв сохранён!';
+    setTimeout(() => renderRequests(), 300);
 });
 
 // ===== SLIDER =====
@@ -387,22 +408,55 @@ document.getElementById('sliderNext').addEventListener('click', () => { nextSlid
 // ===== ADMIN =====
 function checkAdmin() {
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-    document.getElementById('adminLoginBox').style.display = isAdmin ? 'none' : 'block';
-    document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
+    const loginBox = document.getElementById('adminLoginBox');
+    const panel = document.getElementById('adminPanel');
+    
+    if (loginBox) loginBox.style.display = isAdmin ? 'none' : 'block';
+    if (panel) panel.style.display = isAdmin ? 'block' : 'none';
+    
     if (isAdmin) renderAdmin();
 }
 
-// АДМИН ВХОД — ПУСКАЕТ ЛЮБЫЕ ДАННЫЕ
+// ===== АДМИН ВХОД — ПРОВЕРКА ПО ТЗ =====
 document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    const login = document.getElementById('adminUser').value.trim();
+    const pass = document.getElementById('adminPass').value.trim();
 
-    // ВСЕГДА ПУСКАЕМ В АДМИНКУ
-    sessionStorage.clear();
-    sessionStorage.setItem('isAdmin', 'true');
-    toast('✅ Вход в админ-панель выполнен!', 'success');
-    updateUserUI();
-    checkAdmin();
-    goTo('admin');
+    // ПРОВЕРКА ПО ТЗ
+    if (login === 'Admin26' && pass === 'Demo20') {
+        // Очищаем всё и ставим админа
+        sessionStorage.clear();
+        sessionStorage.setItem('isAdmin', 'true');
+        
+        toast('✅ Вход в админ-панель выполнен!', 'success');
+        updateUserUI();
+        checkAdmin();
+        goTo('admin');
+    } else {
+        toast('❌ Неверный логин или пароль администратора', 'error');
+        // Показываем ошибку прямо в форме
+        const errorEl = document.createElement('div');
+        errorEl.className = 'error show';
+        errorEl.textContent = 'Неверный логин или пароль';
+        errorEl.style.color = '#dc3545';
+        errorEl.style.fontSize = '14px';
+        errorEl.style.marginTop = '8px';
+        errorEl.style.textAlign = 'center';
+        
+        // Удаляем старую ошибку если есть
+        const oldError = document.querySelector('.admin-error');
+        if (oldError) oldError.remove();
+        errorEl.className = 'admin-error error show';
+        
+        const form = document.getElementById('adminLoginForm');
+        form.appendChild(errorEl);
+        
+        setTimeout(() => {
+            if (errorEl.parentNode) errorEl.remove();
+        }, 3000);
+    }
 });
 
 document.getElementById('adminLogoutBtn').addEventListener('click', function() {
